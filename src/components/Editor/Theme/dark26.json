@@ -1,0 +1,125 @@
+{
+  "base": "vs-dark",
+  "inherit": true,
+  "rules": [
+    {
+      "token": "comment",
+      "foreground": "6A9955"
+    },
+    {
+      "token": "string",
+      "foreground": "CE9178"
+    },
+    {
+      "token": "string.escape",
+      "foreground": "D7BA7D"
+    },
+    {
+      "token": "number",
+      "foreground": "B5CEA8"
+    },
+    {
+      "token": "regexp",
+      "foreground": "D16969"
+    },
+    {
+      "token": "keyword",
+      "foreground": "C586C0"
+    },
+    {
+      "token": "keyword.control",
+      "foreground": "C586C0"
+    },
+    {
+      "token": "operator",
+      "foreground": "D4D4D4"
+    },
+    {
+      "token": "delimiter",
+      "foreground": "D4D4D4"
+    },
+    {
+      "token": "identifier",
+      "foreground": "9CDCFE"
+    },
+    {
+      "token": "variable",
+      "foreground": "9CDCFE"
+    },
+    {
+      "token": "parameter",
+      "foreground": "9CDCFE"
+    },
+    {
+      "token": "property",
+      "foreground": "9CDCFE"
+    },
+    {
+      "token": "type",
+      "foreground": "4EC9B0"
+    },
+    {
+      "token": "class",
+      "foreground": "4EC9B0"
+    },
+    {
+      "token": "interface",
+      "foreground": "4EC9B0"
+    },
+    {
+      "token": "enum",
+      "foreground": "4EC9B0"
+    },
+    {
+      "token": "namespace",
+      "foreground": "4EC9B0"
+    },
+    {
+      "token": "function",
+      "foreground": "DCDCAA"
+    },
+    {
+      "token": "method",
+      "foreground": "DCDCAA"
+    },
+    {
+      "token": "constructor",
+      "foreground": "DCDCAA"
+    },
+    {
+      "token": "tag",
+      "foreground": "569CD6"
+    },
+    {
+      "token": "attribute.name",
+      "foreground": "9CDCFE"
+    },
+    {
+      "token": "attribute.value",
+      "foreground": "CE9178"
+    },
+    {
+      "token": "invalid",
+      "foreground": "F44747"
+    }
+  ],
+  "colors": {
+    "editor.background": "#121314",
+    "editor.foreground": "#BBBEBF",
+    "editorLineNumber.foreground": "#6B6B6B",
+    "editorLineNumber.activeForeground": "#BBBBBB",
+    "editorCursor.foreground": "#AEAFAD",
+    "editor.selectionBackground": "#264F78",
+    "editor.inactiveSelectionBackground": "#3A3D41",
+    "editor.selectionHighlightBackground": "#ADD6FF26",
+    "editor.wordHighlightBackground": "#575757B8",
+    "editor.wordHighlightStrongBackground": "#004972B8",
+    "editor.findMatchBackground": "#515C6A",
+    "editor.findMatchHighlightBackground": "#EA5C0055",
+    "editorIndentGuide.background": "#404040",
+    "editorIndentGuide.activeBackground": "#707070",
+    "editorWhitespace.foreground": "#3B3B3B",
+    "editorBracketMatch.background": "#0064001A",
+    "editorBracketMatch.border": "#888888"
+  }
+}
