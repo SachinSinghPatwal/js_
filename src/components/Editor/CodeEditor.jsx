@@ -98,9 +98,8 @@ const CodeEditor = () => {
       editorRef.current.setValue(formattedCode);
       const parsedToAST = parseCode(formattedCode);
       setAst(parsedToAST);
-      let result = traverseAST(parsedToAST);
+      // traverseAST(parsedToAST);
       const scopeTree = buildScopeTree(parsedToAST);
-      console.log("traverseAST result:", result);
       console.log("Scope Tree:", scopeTree);
     } catch (error) {
       console.error(error.message);

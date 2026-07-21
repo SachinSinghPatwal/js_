@@ -3,8 +3,7 @@ export function createScope(type, parent = null) {
     type,
     parent,
 
-    variables: [],
-    functions: [],
+    variables: new Map(),
 
     children: [],
   };
