@@ -179,3 +179,44 @@ Decision
 Expressions are never evaluated during scope building or memory creation.
 
 Evaluation occurs only during execution.
+
+## Decision 009
+
+Title
+
+Execution Context Ownership
+
+Status
+
+LOCKED
+
+Decision
+
+Execution Contexts reference the corresponding Scope Tree node.
+
+They do not duplicate scopes or declarations.
+
+Reason
+
+The Scope Tree is the static blueprint.
+Execution Contexts are runtime objects that operate on that blueprint.
+
+## Decision 010
+
+Title
+
+Lexical Environment Ownership
+
+Status
+
+LOCKED
+
+Decision
+
+Each Execution Context owns exactly one Lexical Environment.
+
+The Lexical Environment is a runtime object created from the corresponding Scope Tree node during execution.
+
+Reason
+
+Separates the static blueprint from runtime memory while matching JavaScript engine behavior.
