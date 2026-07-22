@@ -1,10 +1,10 @@
 import { createExecutionContext } from "../runtime/createExecutionContext";
-import { createBindings } from "../memory/createBindings";
+import { populateBindings } from "../memory/createRuntimeBindings.js";
 
 export function createRuntime(scopeTree) {
   const globalExecutionContext = createExecutionContext("global", scopeTree);
 
-  createBindings(
+  populateBindings(
     scopeTree,
     globalExecutionContext.lexicalEnvironment.environmentRecord,
   );
