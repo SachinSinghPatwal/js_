@@ -2,7 +2,7 @@ export function createBinding(name, kind) {
   return {
     name,
     kind,
-    value: undefined,
+    value: null,
     initialized: false,
   };
 }

@@ -8,6 +8,5 @@ export function createRuntime(scopeTree) {
     scopeTree,
     globalExecutionContext.lexicalEnvironment.environmentRecord,
   );
-
   return globalExecutionContext;
 }

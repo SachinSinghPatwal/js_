@@ -240,3 +240,44 @@ The Environment Record stores runtime bindings created during Memory Creation.
 Reason
 
 Separates the runtime container (Lexical Environment) from the runtime storage (Environment Record).
+
+Decision 011 — Environment Record Ownership
+Problem
+
+An Execution Context requires a runtime memory structure to store variable bindings created during the Memory Creation phase. The Scope Tree only contains static declaration metadata and cannot store runtime state.
+
+Decision
+
+Each Lexical Environment owns exactly one Environment Record.
+
+The Environment Record is responsible for storing all runtime bindings belonging to that lexical scope.
+
+Rationale
+Keeps runtime data separate from static analysis.
+Mirrors the ECMAScript execution model.
+Every lexical scope has its own runtime storage.
+Enables independent runtime state for nested scopes.
+Consequences
+Runtime bindings are stored only inside Environment Records.
+The Scope Tree remains immutable after static analysis.
+Nested scopes will naturally receive their own Environment Records.
+Variable lookup will later operate through Environment Records instead of the Scope Tree.
+Decision 012 — Identifier Resolution Strategy
+Problem
+
+During execution, the engine must resolve an identifier (for example, a) to its corresponding runtime binding. The Scope Tree contains declaration information but does not represent the current runtime state of variables.
+
+Decision
+
+Identifier resolution will always operate on the Lexical Environment chain by searching Environment Records. The Scope Tree will never be consulted during runtime variable lookup.
+
+Rationale
+The Scope Tree is a static blueprint generated during analysis.
+Runtime values exist only inside Environment Records.
+Walking the Lexical Environment chain (outer) accurately models JavaScript lexical scoping.
+This design aligns with the ECMAScript specification and cleanly separates static analysis from execution.
+Consequences
+Every variable read or write begins by resolving a binding through the current Lexical Environment.
+Nested scope lookup is implemented by traversing the outer chain.
+Runtime execution remains independent of the parser and scope builder.
+Features such as closures, block scope, shadowing, and TDZ naturally build on the same identifier resolution algorithm.

@@ -102,9 +102,7 @@ const CodeEditor = () => {
 
       const runtime = createRuntime(scopeTree);
 
-      // console.log(
-      //   runtime.lexicalEnvironment.environmentRecord.bindings.get("a"),
-      // );
+      console.log(runtime);
       // console.log(runtime.lexicalEnvironment.environmentRecord.bindings.size);
     } catch (error) {
       console.error(error.message);
