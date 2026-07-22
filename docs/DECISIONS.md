@@ -220,3 +220,23 @@ The Lexical Environment is a runtime object created from the corresponding Scope
 Reason
 
 Separates the static blueprint from runtime memory while matching JavaScript engine behavior.
+
+Decision 011
+
+Title
+
+Environment Record Ownership
+
+Status
+
+LOCKED
+
+Decision
+
+Each Lexical Environment owns exactly one Environment Record.
+
+The Environment Record stores runtime bindings created during Memory Creation.
+
+Reason
+
+Separates the runtime container (Lexical Environment) from the runtime storage (Environment Record).

@@ -3,11 +3,10 @@ import Editor, { loader } from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
 import Dark26Theme from "./Theme/dark26.json";
 import { SquareDashedText } from "lucide-react";
-import { formatCode } from "../../engine/formatter/formatCode";
-import { parseCode } from "../../engine/parser/parseCode";
-import { traverseAST } from "../../engine/traverser/traverseAST";
-import { buildScopeTree } from "../../engine/scope/scopeBuilder.js";
-
+import { formatCode } from "../../formatter/formatCode";
+import { parseCode } from "../../parser/parseCode";
+import { buildScopeTree } from "../../scope/scopeBuilder.js";
+import { createRuntime } from "../../engine/createRuntime";
 const baseTheme = {
   fontSize: 14,
   fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
@@ -100,7 +99,10 @@ const CodeEditor = () => {
       setAst(parsedToAST);
       // traverseAST(parsedToAST);
       const scopeTree = buildScopeTree(parsedToAST);
-      console.log("Scope Tree:", scopeTree);
+
+      const runtime = createRuntime(scopeTree);
+
+      console.log(runtime.lexicalEnvironment.environmentRecord.bindings);
     } catch (error) {
       console.error(error.message);
     }

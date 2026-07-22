@@ -1,6 +1,5 @@
 export function registerDeclaration(scope, name, kind) {
-  scope.variables.set({
-    name,
+  scope.variables.set(name, {
     kind,
   });
 }
