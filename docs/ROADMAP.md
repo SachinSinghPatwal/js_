@@ -18,17 +18,17 @@
 
 ## Phase 3
 
-- [ ] Execution Context Builder
-- [ ] Lexical Environment
-- [ ] Variable Environment
+- [x] Execution Context Builder
+- [x] Lexical Environment
+- [x] Variable Environment
 
 ---
 
 ## Phase 4
 
-- [ ] Memory Creation
-- [ ] Hoisting
-- [ ] TDZ
+- [x] Memory Creation
+- [x] Hoisting
+- [x] TDZ
 - [ ] Function Hoisting
 
 ---
