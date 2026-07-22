@@ -7,6 +7,9 @@ import { formatCode } from "../../formatter/formatCode";
 import { parseCode } from "../../parser/parseCode";
 import { buildScopeTree } from "../../scope/scopeBuilder.js";
 import { createRuntime } from "../../engine/createRuntime";
+import { resolveIdentifier } from "../../runtime/resolveIndentifier.js";
+import { getBindingValue } from "../../runtime/getBindingValues.js";
+import { setBindingValue } from "../../runtime/setBindingValues.js";
 const baseTheme = {
   fontSize: 14,
   fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
@@ -102,8 +105,20 @@ const CodeEditor = () => {
 
       const runtime = createRuntime(scopeTree);
 
-      console.log(runtime);
-      // console.log(runtime.lexicalEnvironment.environmentRecord.bindings.size);
+      // const binding = resolveIdentifier("a", runtime.lexicalEnvironment);
+
+      // console.log(binding);
+
+      const binding1 = resolveIdentifier("a", runtime.lexicalEnvironment);
+      const binding2 = resolveIdentifier("b", runtime.lexicalEnvironment);
+
+      setBindingValue(binding1, 5);
+      setBindingValue(binding2, 5);
+
+      console.log(binding1);
+      console.log(binding2);
+
+      // console.log(runtime);
     } catch (error) {
       console.error(error.message);
     }

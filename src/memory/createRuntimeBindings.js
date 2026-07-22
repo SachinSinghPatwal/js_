@@ -1,9 +1,10 @@
 import { createBinding } from "../runtime/createBinding.js";
-import { UNINITIALIZED } from "../runtime/constant.js";
+// import { UNINITIALIZED } from "../runtime/constant.js";
 
 export function populateBindings(scope, environmentRecord) {
   for (const [name, variable] of scope.variables) {
     const binding = createBinding(name, variable.kind);
+    const UNINITIALIZED = Symbol("UNINITIALIZED");
 
     switch (variable.kind) {
       case "var":

@@ -221,7 +221,7 @@ Reason
 
 Separates the static blueprint from runtime memory while matching JavaScript engine behavior.
 
-Decision 011
+## Decision 011
 
 Title
 
@@ -262,7 +262,8 @@ Runtime bindings are stored only inside Environment Records.
 The Scope Tree remains immutable after static analysis.
 Nested scopes will naturally receive their own Environment Records.
 Variable lookup will later operate through Environment Records instead of the Scope Tree.
-Decision 012 — Identifier Resolution Strategy
+
+## Decision 012 — Identifier Resolution Strategy
 Problem
 
 During execution, the engine must resolve an identifier (for example, a) to its corresponding runtime binding. The Scope Tree contains declaration information but does not represent the current runtime state of variables.
@@ -281,3 +282,60 @@ Every variable read or write begins by resolving a binding through the current L
 Nested scope lookup is implemented by traversing the outer chain.
 Runtime execution remains independent of the parser and scope builder.
 Features such as closures, block scope, shadowing, and TDZ naturally build on the same identifier resolution algorithm.
+
+## Decision 013 — Binding Access Responsibility
+Problem
+
+Multiple execution algorithms (identifier evaluation, expressions, function calls, assignments) need to read the value of a runtime binding. Performing TDZ validation everywhere would duplicate logic and increase maintenance complexity.
+
+Decision
+
+Reading a binding's value will always be performed through a dedicated runtime algorithm. This algorithm is responsible for enforcing TDZ and returning the stored value.
+
+Rationale
+Centralizes TDZ enforcement.
+Eliminates duplicated runtime checks.
+Keeps identifier resolution and value access separate.
+Mirrors the layered architecture used throughout the project.
+Consequences
+resolveIdentifier() only locates bindings.
+getBindingValue() becomes the single entry point for reading runtime values.
+Future expression evaluators simply call these runtime APIs.
+
+## Decision 014 — Executor Responsibility
+Problem
+
+The runtime has algorithms for resolving identifiers and managing bindings, but there is no component responsible for traversing the AST and executing nodes in source order.
+
+Decision
+
+Introduce a dedicated Executor responsible solely for traversing the AST and delegating runtime operations to specialized algorithms.
+
+Rationale
+Separates traversal from runtime logic.
+Keeps runtime algorithms focused on a single responsibility.
+Makes adding new AST node types incremental.
+Closely follows the architecture of modern JavaScript engines.
+Consequences
+The executor never manipulates Environment Records directly.
+All variable access goes through runtime APIs.
+New syntax is supported by adding node executors rather than changing the runtime.
+
+## Decision 015 — Memory Creation vs Execution
+Problem
+
+Variable declarations appear in both the Memory Creation phase and the Execution phase. The runtime must clearly distinguish between allocating a binding and initializing it.
+
+Decision
+
+Memory Creation is responsible only for allocating bindings. Execution is responsible for evaluating initializer expressions and updating those existing bindings.
+
+Rationale
+Matches the ECMAScript execution model.
+Prevents duplicate binding creation.
+Clearly separates allocation from initialization.
+Enables TDZ to exist naturally between these two phases.
+Consequences
+Memory Creation never evaluates expressions.
+Execution never creates bindings.
+Variable declarations become binding updates during execution.
