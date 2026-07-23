@@ -15,23 +15,24 @@ export function buildScopeTree(ast) {
     },
 
     FunctionDeclaration(node, state, c) {
-      // Register function name in parent scope
-      registerDeclaration(state, node.id.name, "function", node);
-
-      // Create a new function scope
+      // Create the function scope first
       const functionScope = createScope("Function", state);
 
-      // Connect it to its parent
+      // Register the function in the parent scope and store a reference
+      // to its function scope
+      registerDeclaration(state, node.id.name, "function", node, functionScope);
+
+      // Connect the function scope to its parent
       state.children.push(functionScope);
 
-      // Register parameters inside the function scope
+      // Register parameters in the function scope
       for (const param of node.params) {
         if (param.type === "Identifier") {
           registerDeclaration(functionScope, param.name, "parameter");
         }
       }
 
-      // Continue traversing using the function scope
+      // Traverse the function body using the function scope
       for (const statement of node.body.body) {
         c(statement, functionScope);
       }

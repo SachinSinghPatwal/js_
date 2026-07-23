@@ -36,9 +36,9 @@
 ## Phase 5
 
 - [ ] Execution Engine
-- [ ] Expression Evaluation
-- [ ] Identifier Resolution
-- [ ] Assignment
+- [x] Expression Evaluation
+- [x] Identifier Resolution
+- [x] Assignment
 - [ ] Function Calls
 
 ---
@@ -46,8 +46,10 @@
 ## Phase 6
 
 - [ ] Heap
-- [ ] Closures
 - [ ] Objects
+- [ ] Arrays
+- [ ] References
+- [ ] Closures
 
 ---
 
@@ -67,3 +69,32 @@
 - [ ] Poll Phase
 - [ ] Check Phase
 - [ ] Close Callbacks
+
+## Out of Scope
+
+The following features are intentionally excluded unless a future roadmap
+explicitly includes them:
+
+- Full ECMAScript compliance
+- JIT compilation
+- Bytecode generation
+- Optimizing compiler
+- Garbage Collection internals
+- Hidden Classes
+- Inline Caches
+- Complete parser implementation
+- Complete browser API implementation
+
+## MVP Completion Criteria
+
+The project reaches MVP when it can accurately visualize:
+
+- Variable creation
+- Hoisting
+- TDZ
+- Scope Chain
+- Function Calls
+- Execution Contexts
+- Closures
+- Objects
+- Event Loop

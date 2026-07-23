@@ -1,4 +1,5 @@
 import { createBinding } from "../runtime/createBinding.js";
+import { FunctionObject } from "./FunctionObject.js";
 // import { UNINITIALIZED } from "../runtime/constant.js";
 
 export function populateBindings(scope, environmentRecord) {
@@ -23,11 +24,16 @@ export function populateBindings(scope, environmentRecord) {
         break;
 
       case "function":
-        binding.value = {
-          type: "FunctionObject",
-          name,
-        };
+        binding.value = new FunctionObject(
+          variable.node,
+          variable.functionScope,
+        );
         binding.initialized = true;
+        break;
+
+      case "parameter":
+        binding.value = UNINITIALIZED;
+        binding.initialized = false;
         break;
     }
 
