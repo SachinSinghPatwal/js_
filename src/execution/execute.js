@@ -1,7 +1,7 @@
-import { executeStatement } from "./executeStatement";
+import { executeNode } from "./executeNode";
 
 export function execute(ast, executionContext) {
   for (const statement of ast.body) {
-    executeStatement(statement, executionContext);
+    executeNode(statement, executionContext);
   }
 }

@@ -29,7 +29,7 @@
 - [x] Memory Creation
 - [x] Hoisting
 - [x] TDZ
-- [ ] Function Hoisting
+- [x] Function Hoisting
 
 ---
 

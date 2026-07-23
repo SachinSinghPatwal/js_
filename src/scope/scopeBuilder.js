@@ -16,7 +16,7 @@ export function buildScopeTree(ast) {
 
     FunctionDeclaration(node, state, c) {
       // Register function name in parent scope
-      registerDeclaration(state, node.id.name, "function");
+      registerDeclaration(state, node.id.name, "function", node);
 
       // Create a new function scope
       const functionScope = createScope("Function", state);

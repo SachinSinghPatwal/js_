@@ -1,4 +1,4 @@
-import { UNINITIALIZED } from "./constant.js";
+
 
 export function setBindingValue(binding, value) {
   if (binding.kind === "const" && binding.initialized) {

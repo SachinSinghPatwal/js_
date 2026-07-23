@@ -7,9 +7,9 @@ import { formatCode } from "../../formatter/formatCode";
 import { parseCode } from "../../parser/parseCode";
 import { buildScopeTree } from "../../scope/scopeBuilder.js";
 import { createRuntime } from "../../engine/createRuntime";
-import { resolveIdentifier } from "../../runtime/resolveIndentifier.js";
-import { getBindingValue } from "../../runtime/getBindingValues.js";
-import { setBindingValue } from "../../runtime/setBindingValues.js";
+import {execute} from "../../execution/execute.js";
+
+
 const baseTheme = {
   fontSize: 14,
   fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
@@ -103,20 +103,24 @@ const CodeEditor = () => {
       // traverseAST(parsedToAST);
       const scopeTree = buildScopeTree(parsedToAST);
 
+      console.log(scopeTree.variables);
+
       const runtime = createRuntime(scopeTree);
+
+      execute(parsedToAST, runtime);
 
       // const binding = resolveIdentifier("a", runtime.lexicalEnvironment);
 
       // console.log(binding);
 
-      const binding1 = resolveIdentifier("a", runtime.lexicalEnvironment);
-      const binding2 = resolveIdentifier("b", runtime.lexicalEnvironment);
+      // const binding1 = resolveIdentifier("a", runtime.lexicalEnvironment);
+      // const binding2 = resolveIdentifier("b", runtime.lexicalEnvironment);
 
-      setBindingValue(binding1, 5);
-      setBindingValue(binding2, 5);
+      // setBindingValue(binding1, 5);
+      // setBindingValue(binding2, 5);
 
-      console.log(binding1);
-      console.log(binding2);
+      // console.log(binding1);
+      // console.log(binding2);
 
       // console.log(runtime);
     } catch (error) {
@@ -144,9 +148,6 @@ const CodeEditor = () => {
           <SquareDashedText className="text-white" size={20} />
         </button>
       </div>
-      {/* <div className="w-[45%] h-full overflow-auto no-scrollbar bg-[#1e1e1e] overflow-x-hidden text-white p-4">
-        <pre>{JSON.stringify(ast, null, 2)}</pre>
-      </div> */}
     </div>
   );
 };
