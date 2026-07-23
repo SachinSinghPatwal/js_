@@ -11,9 +11,10 @@ export function callFunction(functionObject, args) {
     functionExecutionContext.lexicalEnvironment,
   );
 
-  console.log(
-    functionExecutionContext.lexicalEnvironment.environmentRecord.bindings,
+  bindParameters(
+    functionObject,
+    args,
+    functionExecutionContext.lexicalEnvironment,
   );
-
-  throw new Error("Function body execution not implemented");
+  throw new Error("STOP");
 }

@@ -9,7 +9,7 @@ export function evaluateAssignmentExpression(node, executionContext) {
 
   const value = evaluateExpression(node.right, executionContext);
 
-  const binding = resolveIdentifier(executionContext, node.left.name);
+  const binding = resolveIdentifier(node.left.name, executionContext.lexicalEnvironment);
 
   setBindingValue(binding, value);
 

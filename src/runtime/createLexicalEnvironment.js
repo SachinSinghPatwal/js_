@@ -1,9 +1,13 @@
 import { createEnvironmentRecord } from "./createEnvironmentRecord";
 
-export function createLexicalEnvironment(scope) {
+export function createLexicalEnvironment(
+  scope,
+  outer = null,
+  environmentRecord = createEnvironmentRecord(),
+) {
   return {
     scope,
-    outer: null,
-    environmentRecord: createEnvironmentRecord(),
+    outer,
+    environmentRecord,
   };
 }

@@ -21,12 +21,6 @@ export function traverseAST(ast) {
         name: node.id.name,
       });
     },
-    ExpressionStatement(node){
-      console.log(node);
-    },
-    CallExpression(node){
-      console.log(node)
-    }
   });
 
   return analysis;
