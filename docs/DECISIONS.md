@@ -339,3 +339,25 @@ Consequences
 Memory Creation never evaluates expressions.
 Execution never creates bindings.
 Variable declarations become binding updates during execution.
+
+## Decision 016 — Project Boundary
+
+Status
+
+LOCKED
+
+Decision
+
+The execution engine will implement only the JavaScript runtime semantics required for visualization.
+
+The project is not intended to become a complete ECMAScript implementation or a production JavaScript engine.
+
+Rationale
+
+The project's objective is educational visualization rather than language completeness.
+
+Consequences
+
+- Features are added only if they improve visualization.
+- Unsupported ECMAScript features remain outside the project scope until explicitly planned.
+- Architectural simplicity is preferred over exhaustive language support.

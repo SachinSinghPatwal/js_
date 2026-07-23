@@ -2,9 +2,23 @@
 
 ## Goal
 
-Build a JavaScript execution visualizer that closely models how a JavaScript engine executes code.
+# JavaScript Execution Visualizer
 
-This project prioritizes educational correctness over implementation shortcuts.
+An educational JavaScript execution engine that visualizes how JavaScript executes code.
+
+The project models runtime concepts such as:
+
+- Scope Tree
+- Execution Contexts
+- Lexical Environments
+- Environment Records
+- Hoisting
+- TDZ
+- Function Calls
+- Closures
+- Event Loop
+
+The goal is educational correctness rather than implementing the entire ECMAScript specification.
 
 ---
 

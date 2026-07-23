@@ -1,3 +1,7 @@
+
+
+
+
 # Project File Structure and Responsibilities
 
 ```text
