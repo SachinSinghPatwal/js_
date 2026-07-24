@@ -1,5 +1,5 @@
 import { evaluateExpression } from "./expressions/evaluateExpression.js";
 
-export function executeExpressionStatement(node, executionContextStack) {
-  evaluateExpression(node.expression, executionContextStack);
+export function executeExpressionStatement(node, executionContextStack, heap) {
+  return evaluateExpression(node.expression, executionContextStack, heap);
 }

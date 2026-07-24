@@ -2,7 +2,12 @@ import { createFunctionExecutionContext } from "./createFunctionExecutionContext
 import { bindParameters } from "./bindParameters.js";
 import { executeNode } from "../../execution/executeNode.js";
 
-export function callFunction(functionObject, args, executionContextStack) {
+export function callFunction(
+  functionObject,
+  args,
+  executionContextStack,
+  heap,
+) {
   const currentExecutionContext = executionContextStack.current();
 
   const functionExecutionContext = createFunctionExecutionContext(
@@ -18,7 +23,7 @@ export function callFunction(functionObject, args, executionContextStack) {
     functionExecutionContext.lexicalEnvironment,
   );
 
-  executeNode(functionObject.body, executionContextStack);
+  executeNode(functionObject.body, executionContextStack, heap);
 
   const returnValue = functionExecutionContext.returnValue;
 
