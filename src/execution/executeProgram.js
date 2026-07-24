@@ -1,7 +1,7 @@
 import { executeNode } from "./executeNode.js";
 
-export function executeProgram(program, executionContext) {
+export function executeProgram(program, executionContextStack) {
   for (const statement of program.body) {
-    executeNode(statement, executionContext);
+    executeNode(statement, executionContextStack);
   }
 }

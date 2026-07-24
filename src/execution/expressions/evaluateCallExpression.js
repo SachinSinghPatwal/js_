@@ -1,12 +1,12 @@
 import { evaluateExpression } from "./evaluateExpression.js";
 import { callFunction } from "../../runtime/function/callFunction.js";
 
-export function evaluateCallExpression(node, executionContext) {
-  const callee = evaluateExpression(node.callee, executionContext);
+export function evaluateCallExpression(node, executionContextStack) {
+  const callee = evaluateExpression(node.callee, executionContextStack);
 
   const args = node.arguments.map((argument) =>
-    evaluateExpression(argument, executionContext),
+    evaluateExpression(argument, executionContextStack),
   );
 
-  return callFunction(callee, args, executionContext);
+  return callFunction(callee, args, executionContextStack);
 }

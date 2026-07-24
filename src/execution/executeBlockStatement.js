@@ -1,7 +1,13 @@
 import { executeNode } from "./executeNode.js";
 
-export function executeBlockStatement(node, executionContext) {
-  for (const statement of node.body) {
-    executeNode(statement, executionContext);
+export function executeBlockStatement(blockStatement, executionContextStack) {
+  for (const statement of blockStatement.body) {
+    executeNode(statement, executionContextStack);
+
+    const executionContext = executionContextStack.current();
+
+    if (executionContext.isReturning) {
+      return;
+    }
   }
 }

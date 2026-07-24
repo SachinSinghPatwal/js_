@@ -6,7 +6,7 @@ import { SquareDashedText } from "lucide-react";
 import { formatCode } from "../../formatter/formatCode";
 import { parseCode } from "../../parser/parseCode";
 import { buildScopeTree } from "../../scope/scopeBuilder.js";
-import { createRuntime } from "../../engine/createRuntime";
+import { initializeRuntime } from "../../engine/initializeRuntime";
 import {execute} from "../../execution/execute.js";
 
 
@@ -105,7 +105,7 @@ const CodeEditor = () => {
 
       console.log(scopeTree.variables);
 
-      const runtime = createRuntime(scopeTree);
+      const runtime = initializeRuntime(scopeTree);
 
       execute(parsedToAST, runtime);
 

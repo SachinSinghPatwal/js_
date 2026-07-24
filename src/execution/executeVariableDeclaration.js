@@ -4,16 +4,14 @@ import { setBindingValue } from "../runtime/setBindingValues.js";
 
 export function executeVariableDeclaration(
   variableDeclaration,
-  executionContext,
+  executionContextStack,
 ) {
+  const executionContext = executionContextStack.current();
   for (const declarator of variableDeclaration.declarations) {
-    const binding = resolveIdentifier(
-      declarator.id.name,
-      executionContext.lexicalEnvironment,
-    );
+    const binding = resolveIdentifier(declarator.id.name, executionContext);
 
     const value = declarator.init
-      ? evaluateExpression(declarator.init, executionContext)
+      ? evaluateExpression(declarator.init, executionContextStack)
       : undefined;
 
     setBindingValue(binding, value);
