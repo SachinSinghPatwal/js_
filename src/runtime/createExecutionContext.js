@@ -22,5 +22,6 @@ export function createExecutionContext(type, scope) {
 
     // Exception state
     pendingException: undefined,
+    thisValue: undefined,
   };
 }

@@ -11,6 +11,7 @@ import { evaluateUnaryExpression } from "./evaluateUnaryExpression.js";
 import { evaluateUpdateExpression } from "./evaluateUpdateExpression.js";
 import { evaluateLogicalExpression } from "./evaluateLogicalExpression.js";
 import { evaluateConditionalExpression } from "./evaluateConditionalExpression.js";
+import { evaluateNewExpression } from "./evaluateNewExpression.js";
 
 export function evaluateExpression(node, executionContextStack, heap) {
   switch (node.type) {
@@ -52,6 +53,9 @@ export function evaluateExpression(node, executionContextStack, heap) {
 
     case "ConditionalExpression":
       return evaluateConditionalExpression(node, executionContextStack, heap);
+
+    case "NewExpression":
+      return evaluateNewExpression(node, executionContextStack, heap);
 
     default:
       throw new Error(`Unsupported expression: ${node.type}`);

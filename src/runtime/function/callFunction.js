@@ -7,6 +7,7 @@ export function callFunction(
   args,
   executionContextStack,
   heap,
+  thisValue = undefined,
 ) {
   const currentExecutionContext = executionContextStack.current();
 
@@ -14,6 +15,10 @@ export function callFunction(
     functionObject,
     currentExecutionContext.lexicalEnvironment,
   );
+
+  if (thisValue !== undefined) {
+    functionExecutionContext.thisValue = thisValue;
+  }
 
   executionContextStack.push(functionExecutionContext);
 
