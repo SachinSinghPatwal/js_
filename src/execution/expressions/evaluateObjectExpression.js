@@ -1,6 +1,6 @@
 import { allocateObject } from "../../runtime/heap/allocateObject.js";
 import { evaluateExpression } from "./evaluateExpression.js";
-import { createFunctionObject } from "../../runtime/function/createFunctionObject.js";
+import { FunctionObject } from "../../memory/FunctionObject.js";
 
 export function evaluateObjectExpression(node, executionContextStack, heap) {
   const executionContext = executionContextStack.current();
@@ -13,7 +13,7 @@ export function evaluateObjectExpression(node, executionContextStack, heap) {
       : property.key.name;
 
     if (property.method) {
-      object[key] = createFunctionObject(
+      object[key] = FunctionObject(
         property.value,
         executionContext.lexicalEnvironment,
       );
