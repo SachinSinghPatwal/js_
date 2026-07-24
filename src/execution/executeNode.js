@@ -13,11 +13,33 @@ import { executeContinueStatement } from "./executeContinueStatement.js";
 import { executeDoWhileStatement } from "./executeDoWhileStatement.js";
 import { executeThrowStatement } from "./executeThrowStatement.js";
 import { executeTryStatement } from "./executeTryStatement.js";
+import { executeForInStatement } from "./executeForInStatement.js";
+import { executeForOfStatement } from "./executeForOfStatement.js";
+import { executeLabeledStatement } from "./executeLabeledStatement.js";
+import { executeClassDeclaration } from "./executeClassDeclaration.js";
+import { evaluateImportDeclaration } from "./evaluateImportDeclaration.js";
+import { evaluateExportNamedDeclaration } from "./evaluateExportNamedDeclaration.js";
+import { evaluateExportDefaultDeclaration } from "./evaluateExportDefaultDeclaration.js";
+import { evaluateExportAllDeclaration } from "./evaluateExportAllDeclaration.js";
 
 export function executeNode(node, executionContextStack, heap) {
+  if (!node) return;
+
   switch (node.type) {
     case "Program":
       return executeProgram(node, executionContextStack, heap);
+
+    case "ImportDeclaration":
+      return evaluateImportDeclaration(node, executionContextStack, heap);
+
+    case "ExportNamedDeclaration":
+      return evaluateExportNamedDeclaration(node, executionContextStack, heap);
+
+    case "ExportDefaultDeclaration":
+      return evaluateExportDefaultDeclaration(node, executionContextStack, heap);
+
+    case "ExportAllDeclaration":
+      return evaluateExportAllDeclaration(node, executionContextStack, heap);
 
     case "BlockStatement":
       return executeBlockStatement(node, executionContextStack, heap);
@@ -27,6 +49,9 @@ export function executeNode(node, executionContextStack, heap) {
 
     case "FunctionDeclaration":
       return executeFunctionDeclaration(node, executionContextStack, heap);
+
+    case "ClassDeclaration":
+      return executeClassDeclaration(node, executionContextStack, heap);
 
     case "ExpressionStatement":
       return executeExpressionStatement(node, executionContextStack, heap);
@@ -53,6 +78,15 @@ export function executeNode(node, executionContextStack, heap) {
 
     case "DoWhileStatement":
       return executeDoWhileStatement(node, executionContextStack, heap);
+
+    case "LabeledStatement":
+      return executeLabeledStatement(node, executionContextStack, heap);
+
+    case "ForInStatement":
+      return executeForInStatement(node, executionContextStack, heap);
+
+    case "ForOfStatement":
+      return executeForOfStatement(node, executionContextStack, heap);
 
     case "ThrowStatement":
       return executeThrowStatement(node, executionContextStack, heap);

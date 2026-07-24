@@ -12,6 +12,9 @@ export function createExecutionContext(type, scope) {
     // Initially both point to the same environment
     variableEnvironment: lexicalEnvironment,
 
+    // Control-flow metadata
+    labelStack: [],
+
     // Return state
     returnValue: undefined,
     isReturning: false,

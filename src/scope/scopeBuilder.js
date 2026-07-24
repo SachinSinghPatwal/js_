@@ -8,9 +8,9 @@ export function buildScopeTree(ast) {
   walk.recursive(ast, globalScope, {
     VariableDeclaration(node, state) {
       for (const declaration of node.declarations) {
-        if (declaration.id.type === "Identifier") {
-          registerDeclaration(state, declaration.id.name, node.kind);
-        }
+        extractPatternNames(declaration.id).forEach((name) => {
+          registerDeclaration(state, name, node.kind);
+        });
       }
     },
 
@@ -27,9 +27,9 @@ export function buildScopeTree(ast) {
 
       // Register parameters in the function scope
       for (const param of node.params) {
-        if (param.type === "Identifier") {
-          registerDeclaration(functionScope, param.name, "parameter");
-        }
+        extractPatternNames(param).forEach((name) => {
+          registerDeclaration(functionScope, name, "parameter");
+        });
       }
 
       // Traverse the function body using the function scope
@@ -50,4 +50,58 @@ export function buildScopeTree(ast) {
   });
 
   return globalScope;
+}
+
+/**
+ * Recursively extract all bound identifier names from a pattern node.
+ * Handles: Identifier, ObjectPattern, ArrayPattern, AssignmentPattern, RestElement
+ */
+function extractPatternNames(pattern) {
+  if (!pattern) {
+    return [];
+  }
+
+  switch (pattern.type) {
+    case "Identifier":
+      return [pattern.name];
+
+    case "ObjectPattern": {
+      const names = [];
+
+      for (const property of pattern.properties) {
+        if (property.type === "RestElement") {
+          names.push(...extractPatternNames(property.argument));
+        } else {
+          // property.value is the binding target (can be nested pattern)
+          names.push(...extractPatternNames(property.value));
+        }
+      }
+
+      return names;
+    }
+
+    case "ArrayPattern": {
+      const names = [];
+
+      for (const element of pattern.elements) {
+        if (element === null) {
+          continue; // elision
+        }
+
+        names.push(...extractPatternNames(element));
+      }
+
+      return names;
+    }
+
+    case "AssignmentPattern":
+      // const { a = 10 } = obj → the binding target is the left side
+      return extractPatternNames(pattern.left);
+
+    case "RestElement":
+      return extractPatternNames(pattern.argument);
+
+    default:
+      return [];
+  }
 }

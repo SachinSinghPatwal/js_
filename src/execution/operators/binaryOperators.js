@@ -7,6 +7,14 @@ export const binaryOperators = {
   "%": (left, right) => left % right,
   "**": (left, right) => left ** right,
 
+  // Bitwise
+  "&": (left, right) => left & right,
+  "|": (left, right) => left | right,
+  "^": (left, right) => left ^ right,
+  "<<": (left, right) => left << right,
+  ">>": (left, right) => left >> right,
+  ">>>": (left, right) => left >>> right,
+
   // Equality
   "==": (left, right) => left == right,
   "===": (left, right) => left === right,

@@ -1,4 +1,4 @@
-import { createEnvironmentRecord } from "./createEnvironmentRecord";
+import { createEnvironmentRecord } from "./createEnvironmentRecord.js";
 
 export function createLexicalEnvironment(
   scope,

@@ -18,9 +18,38 @@ export function evaluateMemberAssignmentExpression(
     ? evaluateExpression(node.left.property, executionContextStack, heap)
     : node.left.property.name;
 
-  const value = evaluateExpression(node.right, executionContextStack, heap);
+  let lhsValue;
+  if (node.operator !== "=") {
+    lhsValue = object[property];
 
-  object[property] = value;
+    // Short-circuit logical assignments
+    if (node.operator === "&&=" && !lhsValue) return lhsValue;
+    if (node.operator === "||=" && lhsValue) return lhsValue;
+    if (node.operator === "??=" && lhsValue !== null && lhsValue !== undefined) return lhsValue;
+  }
 
-  return value;
+  const rhsValue = evaluateExpression(node.right, executionContextStack, heap);
+
+  let finalValue = rhsValue;
+  switch (node.operator) {
+    case "=": finalValue = rhsValue; break;
+    case "+=": finalValue = lhsValue + rhsValue; break;
+    case "-=": finalValue = lhsValue - rhsValue; break;
+    case "*=": finalValue = lhsValue * rhsValue; break;
+    case "/=": finalValue = lhsValue / rhsValue; break;
+    case "%=": finalValue = lhsValue % rhsValue; break;
+    case "**=": finalValue = lhsValue ** rhsValue; break;
+    case "<<=": finalValue = lhsValue << rhsValue; break;
+    case ">>=": finalValue = lhsValue >> rhsValue; break;
+    case ">>>=": finalValue = lhsValue >>> rhsValue; break;
+    case "&=": finalValue = lhsValue & rhsValue; break;
+    case "^=": finalValue = lhsValue ^ rhsValue; break;
+    case "|=": finalValue = lhsValue | rhsValue; break;
+    case "&&=": finalValue = rhsValue; break;
+    case "||=": finalValue = rhsValue; break;
+    case "??=": finalValue = rhsValue; break;
+  }
+
+  object[property] = finalValue;
+  return finalValue;
 }

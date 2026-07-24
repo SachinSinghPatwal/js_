@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/immutability */
 import Editor, { loader } from "@monaco-editor/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Dark26Theme from "./Theme/dark26.json";
 import { SquareDashedText } from "lucide-react";
 import { formatCode } from "../../formatter/formatCode";
@@ -76,8 +75,6 @@ const defaultCodeSnippet = `console.log('a') \n function a(){\n \t new Promise.r
     };`;
 
 const CodeEditor = () => {
-  const [ast, setAst] = useState("");
-
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -99,7 +96,6 @@ const CodeEditor = () => {
       const formattedCode = await formatCode(code);
       editorRef.current.setValue(formattedCode);
       const parsedToAST = parseCode(formattedCode);
-      setAst(parsedToAST);
       // traverseAST(parsedToAST);
       const scopeTree = buildScopeTree(parsedToAST);
 

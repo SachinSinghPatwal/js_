@@ -12,9 +12,24 @@ import { evaluateUpdateExpression } from "./evaluateUpdateExpression.js";
 import { evaluateLogicalExpression } from "./evaluateLogicalExpression.js";
 import { evaluateConditionalExpression } from "./evaluateConditionalExpression.js";
 import { evaluateNewExpression } from "./evaluateNewExpression.js";
+import { evaluateSequenceExpression } from "./evaluateSequenceExpression.js";
+import { evaluateArrowFunctionExpression } from "./evaluateArrowFunctionExpression.js";
+import { evaluateClassExpression } from "./evaluateClassExpression.js";
+import { evaluateTemplateLiteral } from "./evaluateTemplateLiteral.js";
+import { evaluateTaggedTemplateExpression } from "./evaluateTaggedTemplateExpression.js";
+import { evaluateChainExpression } from "./evaluateChainExpression.js";
 
 export function evaluateExpression(node, executionContextStack, heap) {
   switch (node.type) {
+    case "ChainExpression":
+      return evaluateChainExpression(node, executionContextStack, heap);
+
+    case "TemplateLiteral":
+      return evaluateTemplateLiteral(node, executionContextStack, heap);
+
+    case "TaggedTemplateExpression":
+      return evaluateTaggedTemplateExpression(node, executionContextStack, heap);
+
     case "Literal":
       return evaluateLiteral(node);
 
@@ -42,6 +57,9 @@ export function evaluateExpression(node, executionContextStack, heap) {
     case "FunctionExpression":
       return evaluateFunctionExpression(node, executionContextStack);
 
+    case "ArrowFunctionExpression":
+      return evaluateArrowFunctionExpression(node, executionContextStack);
+
     case "UnaryExpression":
       return evaluateUnaryExpression(node, executionContextStack, heap);
 
@@ -56,6 +74,12 @@ export function evaluateExpression(node, executionContextStack, heap) {
 
     case "NewExpression":
       return evaluateNewExpression(node, executionContextStack, heap);
+
+    case "SequenceExpression":
+      return evaluateSequenceExpression(node, executionContextStack, heap);
+
+    case "ClassExpression":
+      return evaluateClassExpression(node, executionContextStack, heap);
 
     default:
       throw new Error(`Unsupported expression: ${node.type}`);
