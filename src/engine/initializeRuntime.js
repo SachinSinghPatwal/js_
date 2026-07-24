@@ -47,11 +47,12 @@ export function initializeRuntime(scopeTree) {
     heap,
     microtaskQueue: [],
     macrotaskQueue: [],
+    consoleLogs: [],
   };
 
   heap.runtime = runtime; // Expose for visualization hooks
 
-  createConsole(globalExecutionContext, heap);
+  createConsole(globalExecutionContext, runtime);
   createSetTimeout(globalExecutionContext, runtime);
   createPromise(globalExecutionContext, runtime);
 

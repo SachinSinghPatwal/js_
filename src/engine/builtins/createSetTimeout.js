@@ -22,6 +22,7 @@ export function createSetTimeout(globalExecutionContext, runtime) {
       // If we wanted to accurately simulate time, we could add a `timeoutAt` field
       // and only drain it when the visualizer's global "clock" reaches that time.
       runtime.macrotaskQueue.push({
+        type: 'Timeout',
         callback,
         args: callbackArgs,
         thisValue: undefined, // setTimeout callbacks default to global/undefined this

@@ -58,6 +58,7 @@ export function createPromise(globalExecutionContext, runtime) {
 
         const createReaction = (handler, defaultResolution) => {
           return {
+            type: 'PromiseReaction',
             callback: {
               isNative: true,
               nativeCall() {

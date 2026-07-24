@@ -10,17 +10,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/vite": "^4.3.2",
     "acorn": "^8.17.0",
     "acorn-walk": "^8.3.5",
     "axios": "^1.18.1",
+    "framer-motion": "^12.42.2",
+    "gsap": "^3.15.0",
     "lucide-react": "^1.25.0",
     "monaco-editor": "^0.55.1",
     "monaco-themes": "^0.4.8",
     "prettier": "^3.9.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-resizable-panels": "^4.12.2",
     "tailwindcss": "^4.3.2"
   },
   "devDependencies": {

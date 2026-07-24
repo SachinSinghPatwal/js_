@@ -1,5 +1,5 @@
 import Editor, { loader } from "@monaco-editor/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import Dark26Theme from "./Theme/dark26.json";
 import { SquareDashedText } from "lucide-react";
 import { formatCode } from "../../formatter/formatCode";
@@ -9,7 +9,7 @@ import { initializeRuntime } from "../../engine/initializeRuntime";
 import { execute } from "../../execution/execute.js";
 import { VisualizationStore } from "../../visualization/store/VisualizationStore.js";
 import { createSnapshot } from "../../visualization/snapshot/SnapshotGenerator.js";
-
+import { createDecorations } from "./decorator.js";
 
 const baseTheme = {
   fontSize: 14,
@@ -26,7 +26,7 @@ const baseTheme = {
 
   automaticLayout: true,
 
-  wordWrap: "off",
+  wordWrap: "on",
 
   tabSize: 2,
   insertSpaces: true,
@@ -72,12 +72,36 @@ const baseTheme = {
   formatOnType: true,
 };
 
-const defaultCodeSnippet = `console.log('a') \n function a(){\n \t new Promise.resolve().then(()=>console.log(b)) \n\t function b(){\n\t\tsetTimeout(() => {\n\t\t new Promise.resolve().then(()=>{\n\t\t console.log("c")
-		})}, 5000)}
-    };`;
+const defaultCodeSnippet = `console.log('1. Sync Start');
+
+function a() {
+  console.log('2. Inside a()');
+  Promise.resolve().then(() => console.log('4. Microtask from a()'));
+  
+  function b() {
+    setTimeout(() => {
+      console.log('5. Macrotask (setTimeout)');
+      Promise.resolve().then(() => {
+        console.log("6. Microtask inside Macrotask");
+      });
+    }, 5000);
+  }
+  
+  b();
+}
+
+a();
+console.log('3. Sync End');`;
 
 const CodeEditor = () => {
   const editorRef = useRef(null);
+  const monacoRef = useRef(null);
+  const prevDecorationsRef = useRef([]);
+
+  const { currentSnapshot } = useSyncExternalStore(
+    (listener) => VisualizationStore.subscribe(listener),
+    () => VisualizationStore.getSnapshot(),
+  );
 
   useEffect(() => {
     loader.init().then((monaco) => {
@@ -85,8 +109,27 @@ const CodeEditor = () => {
     });
   }, []);
 
-  function onMount(editor) {
+  useEffect(() => {
+    if (!editorRef.current || !monacoRef.current || !currentSnapshot) return;
+
+    const node = currentSnapshot.currentNode;
+    if (!node || !node.loc) return;
+
+    const { start, end } = node.loc;
+
+    const decorations = createDecorations(monacoRef.current, start, end);
+
+    prevDecorationsRef.current = editorRef.current.deltaDecorations(
+      prevDecorationsRef.current,
+      decorations,
+    );
+
+    editorRef.current.revealLineInCenterIfOutsideViewport(start.line);
+  }, [currentSnapshot]);
+
+  function onMount(editor, monaco) {
     editorRef.current = editor;
+    monacoRef.current = monaco;
     editor.focus();
   }
 
@@ -98,10 +141,7 @@ const CodeEditor = () => {
       const formattedCode = await formatCode(code);
       editorRef.current.setValue(formattedCode);
       const parsedToAST = parseCode(formattedCode);
-      // traverseAST(parsedToAST);
       const scopeTree = buildScopeTree(parsedToAST);
-
-      console.log(scopeTree.variables);
 
       const runtime = initializeRuntime(scopeTree);
 
@@ -115,7 +155,7 @@ const CodeEditor = () => {
 
       console.log(
         "Execution complete. Snapshots generated:",
-        VisualizationStore.getSnapshot().snapshots.length
+        VisualizationStore.getSnapshot().snapshots.length,
       );
     } catch (error) {
       console.error(error.message);
@@ -123,25 +163,23 @@ const CodeEditor = () => {
   }
 
   return (
-    <div className=" h-[95vh] w-screen overflow-x-hidden">
-      <div className="relative  h-full">
-        <Editor
-          height="100%"
-          defaultLanguage="javascript"
-          defaultValue={defaultCodeSnippet}
-          theme="Dark26"
-          onMount={onMount}
-          options={baseTheme}
-        />
+    <div className="h-full w-full overflow-hidden relative">
+      <Editor
+        height="100%"
+        defaultLanguage="javascript"
+        defaultValue={defaultCodeSnippet}
+        theme="Dark26"
+        onMount={onMount}
+        options={baseTheme}
+      />
 
-        <button
-          className="absolute top-2 right-2 z-1 p-1 rounded-md bg-neutral-800/80 hover:bg-neutral-700"
-          onClick={handleFormat}
-          title="Format Code"
-        >
-          <SquareDashedText className="text-white" size={20} />
-        </button>
-      </div>
+      <button
+        className="absolute top-2 right-2 z-10 p-1.5 rounded-md bg-neutral-800/80 hover:bg-neutral-700 transition-colors"
+        onClick={handleFormat}
+        title="Format & Execute Code"
+      >
+        <SquareDashedText className="text-white" size={18} />
+      </button>
     </div>
   );
 };

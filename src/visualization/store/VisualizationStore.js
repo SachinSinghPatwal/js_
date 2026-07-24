@@ -1,6 +1,9 @@
 let snapshots = [];
 let currentStep = 0;
 let listeners = new Set();
+let modalData = null; // null or { type: 'HeapObject', data: obj }
+
+let cachedState = null;
 
 export const VisualizationStore = {
   subscribe(listener) {
@@ -8,11 +11,19 @@ export const VisualizationStore = {
     return () => listeners.delete(listener);
   },
   getSnapshot() {
-    return {
-      snapshots,
-      currentStep,
-      currentSnapshot: snapshots[currentStep] ?? null,
-    };
+    if (!cachedState) {
+      cachedState = {
+        snapshots,
+        currentStep,
+        currentSnapshot: snapshots[currentStep] ?? null,
+        modalData
+      };
+    }
+    return cachedState;
+  },
+  setModalData(data) {
+    modalData = data;
+    this.notify();
   },
   addSnapshot(snapshot) {
     snapshots = [...snapshots, snapshot];
@@ -39,9 +50,11 @@ export const VisualizationStore = {
   reset() {
     snapshots = [];
     currentStep = 0;
+    modalData = null;
     this.notify();
   },
   notify() {
+    cachedState = null;
     for (const listener of listeners) {
       listener();
     }
