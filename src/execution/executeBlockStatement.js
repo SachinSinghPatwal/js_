@@ -13,5 +13,17 @@ export function executeBlockStatement(
     if (executionContext.isReturning) {
       return;
     }
+
+    if (executionContext.isBreaking) {
+      return;
+    }
+
+    if (executionContext.isContinuing) {
+      return;
+    }
+
+    if (executionContext.pendingException !== undefined) {
+      return;
+    }
   }
 }

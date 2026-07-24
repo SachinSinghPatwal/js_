@@ -37,6 +37,10 @@ export function executeSwitchStatement(node, executionContextStack, heap) {
         executionContext.isBreaking = false;
         return;
       }
+
+      if (executionContext.pendingException !== undefined) {
+        return;
+      }
     }
   }
 }

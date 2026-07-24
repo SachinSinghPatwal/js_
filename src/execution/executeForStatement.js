@@ -32,6 +32,10 @@ export function executeForStatement(node, executionContextStack, heap) {
       executionContext.isContinuing = false;
     }
 
+    if (executionContext.pendingException !== undefined) {
+      return;
+    }
+
     if (node.update) {
       evaluateExpression(node.update, executionContextStack, heap);
     }

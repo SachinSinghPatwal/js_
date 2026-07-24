@@ -20,5 +20,9 @@ export function executeWhileStatement(node, executionContextStack, heap) {
       executionContext.isContinuing = false;
       continue;
     }
+
+    if (executionContext.pendingException !== undefined) {
+      return;
+    }
   }
 }
