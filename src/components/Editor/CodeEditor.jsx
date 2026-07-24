@@ -1,7 +1,7 @@
 import Editor, { loader } from "@monaco-editor/react";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Dark26Theme from "./Theme/dark26.json";
-import { SquareDashedText } from "lucide-react";
+import { Play, SquareDashedText } from "lucide-react";
 import { formatCode } from "../../formatter/formatCode";
 import { parseCode } from "../../parser/parseCode";
 import { buildScopeTree } from "../../scope/scopeBuilder.js";
@@ -113,7 +113,13 @@ const CodeEditor = () => {
     if (!editorRef.current || !monacoRef.current || !currentSnapshot) return;
 
     const node = currentSnapshot.currentNode;
-    if (!node || !node.loc) return;
+    if (!node || !node.loc) {
+      prevDecorationsRef.current = editorRef.current.deltaDecorations(
+        prevDecorationsRef.current,
+        [],
+      );
+      return;
+    }
 
     const { start, end } = node.loc;
 
@@ -153,6 +159,11 @@ const CodeEditor = () => {
 
       execute(parsedToAST, runtime);
 
+      // Capture the final state after execution is complete
+      VisualizationStore.addSnapshot(
+        createSnapshot(stepCount++, null, runtime),
+      );
+
       console.log(
         "Execution complete. Snapshots generated:",
         VisualizationStore.getSnapshot().snapshots.length,
@@ -160,6 +171,15 @@ const CodeEditor = () => {
     } catch (error) {
       console.error(error.message);
     }
+  }
+
+  useEffect(() => {
+    VisualizationStore.setExecuteCallback(handleFormat);
+    return () => VisualizationStore.setExecuteCallback(null);
+  }, []);
+
+  function handleEditorChange() {
+    VisualizationStore.reset();
   }
 
   return (
@@ -170,16 +190,9 @@ const CodeEditor = () => {
         defaultValue={defaultCodeSnippet}
         theme="Dark26"
         onMount={onMount}
+        onChange={handleEditorChange}
         options={baseTheme}
       />
-
-      <button
-        className="absolute top-2 right-2 z-10 p-1.5 rounded-md bg-neutral-800/80 hover:bg-neutral-700 transition-colors"
-        onClick={handleFormat}
-        title="Format & Execute Code"
-      >
-        <SquareDashedText className="text-white" size={18} />
-      </button>
     </div>
   );
 };

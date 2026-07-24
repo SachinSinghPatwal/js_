@@ -1,6 +1,16 @@
 import { useSyncExternalStore, useEffect, useState } from "react";
 import { VisualizationStore } from "../../visualization/store/VisualizationStore";
-import { Play, Pause, StepForward, StepBack, RotateCcw, Layers, Database, ListOrdered, Terminal } from "lucide-react";
+import {
+  Play,
+  Pause,
+  StepForward,
+  StepBack,
+  RotateCcw,
+  Layers,
+  Database,
+  ListOrdered,
+  Terminal,
+} from "lucide-react";
 
 export default function TimelineControls({ panels, togglePanel }) {
   const { snapshots, currentStep } = useSyncExternalStore(
@@ -30,7 +40,7 @@ export default function TimelineControls({ panels, togglePanel }) {
   const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
   return (
-    <div className="flex items-center gap-4 px-4 py-1.5 bg-[#0a0a0a] border-b border-[#222]">
+    <div className="flex items-center gap-4 px-4 py-1.5 bg-[#0a0a0a] border-b border-[#222] rounded-2xl">
       <div className="flex items-center gap-1.5">
         <button
           onClick={() => {
@@ -53,9 +63,13 @@ export default function TimelineControls({ panels, togglePanel }) {
         </button>
 
         <button
-          onClick={() => setIsPlaying(!isPlaying)}
-          disabled={snapshots.length === 0}
-          className="flex items-center justify-center w-7 h-7 mx-1 rounded-full bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 transition-all shadow-[0_0_10px_rgba(37,99,235,0.3)] hover:shadow-[0_0_15px_rgba(37,99,235,0.5)]"
+          onClick={async () => {
+            if (snapshots.length === 0) {
+              await VisualizationStore.executeCode();
+            }
+            setIsPlaying(!isPlaying);
+          }}
+          className="flex items-center justify-center w-7 h-7 mx-1 rounded-full bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-[0_0_10px_rgba(37,99,235,0.3)] hover:shadow-[0_0_15px_rgba(37,99,235,0.5)]"
           title={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (
@@ -66,8 +80,13 @@ export default function TimelineControls({ panels, togglePanel }) {
         </button>
 
         <button
-          onClick={() => VisualizationStore.nextStep()}
-          disabled={currentStep >= snapshots.length - 1}
+          onClick={async () => {
+            if (snapshots.length === 0) {
+              await VisualizationStore.executeCode();
+            }
+            VisualizationStore.nextStep();
+          }}
+          disabled={snapshots.length > 0 && currentStep >= snapshots.length - 1}
           className="p-1.5 text-neutral-400 hover:text-white disabled:opacity-30 transition-colors"
           title="Next Step"
         >
@@ -79,7 +98,7 @@ export default function TimelineControls({ panels, togglePanel }) {
         <span className="text-[10px] font-mono text-neutral-500 min-w-[2rem] text-right">
           {currentStep}
         </span>
-        <div className="relative flex-1 h-1 bg-neutral-800 rounded-full overflow-hidden cursor-pointer">
+        <div className="relative flex-1 h-1 bg-neutral-800 rounded-full  cursor-pointer">
           <input
             type="range"
             min={0}
@@ -131,18 +150,26 @@ export default function TimelineControls({ panels, togglePanel }) {
           Queues
         </button>
       </div>
-      
-      <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-400 border-l border-[#333] pl-3 ml-1">
-        <select
-          value={speed}
-          onChange={(e) => setSpeed(Number(e.target.value))}
-          className="bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors"
-        >
-          <option value={2000}>0.5x</option>
-          <option value={1000}>1.0x</option>
-          <option value={500}>2.0x</option>
-          <option value={250}>4.0x</option>
-        </select>
+
+      <div className="flex items-center gap-2 text-[10px] font-mono  bg-inherit text-neutral-400 border-l border-[#333] pl-3 ml-1">
+        <div className="relative group">
+          <button className="flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-mono transition-colors bg-transparent text-neutral-500 hover:text-neutral-300">
+            Speed: {speed / 1000}s
+          </button>
+          <div className="absolute left-0 top-full pt-1 w-18 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50">
+            <div className="bg-[#111] border border-[#333] rounded shadow-lg ">
+              {[500, 1000, 2000, 3000].map((s) => (
+                <div
+                  key={s}
+                  onClick={() => setSpeed(s)}
+                  className={`px-4 py-2 cursor-pointer hover:bg-[#222] ${speed === s ? "bg-[#222]" : ""}`}
+                >
+                  {s / 1000}s
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

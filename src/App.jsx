@@ -81,7 +81,7 @@ function App() {
 
       {/* Floating Timeline Controls */}
       <div
-        className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out ${
+        className={`absolute  top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out ${
           isControlsVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-4 pointer-events-none"
@@ -97,7 +97,7 @@ function App() {
           );
         }}
       >
-        <div className="rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-[#333] bg-[#0a0a0a]">
+        <div className="rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-[#333] bg-[#0a0a0a]">
           <TimelineControls panels={panels} togglePanel={togglePanel} />
         </div>
       </div>
@@ -126,11 +126,15 @@ function App() {
                   </div>
                 </div>
               </Panel>
-              
+
               {panels.console && (
                 <>
                   <HorizontalResizeHandle />
-                  <Panel defaultSize={30} minSize={15} className="border-t border-[#222]">
+                  <Panel
+                    defaultSize={30}
+                    minSize={15}
+                    className="border-t border-[#222]"
+                  >
                     <ConsolePanel />
                   </Panel>
                 </>

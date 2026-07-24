@@ -59,4 +59,12 @@ export const VisualizationStore = {
       listener();
     }
   },
+  setExecuteCallback(cb) {
+    this._executeCallback = cb;
+  },
+  async executeCode() {
+    if (this._executeCallback) {
+      await this._executeCallback();
+    }
+  }
 };

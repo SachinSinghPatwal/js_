@@ -18,15 +18,16 @@ export default function EventLoopPanel() {
           {isIdle ? "Idle" : "Running"}
         </span>
       </div>
-      <div className="flex-1 p-3 overflow-y-auto flex items-center justify-center relative">
-        <div className={`absolute inset-0 flex items-center justify-center opacity-10`}>
-          <div className="w-32 h-32 rounded-full border-4 border-dashed border-neutral-500 animate-[spin_10s_linear_infinite]" />
-        </div>
-        
-        <div className={`relative z-10 w-24 h-24 rounded-full border-4 ${isIdle ? "border-neutral-700" : "border-neutral-700 border-t-green-500 animate-spin"} flex flex-col items-center justify-center bg-[#0a0a0a] shadow-[0_0_15px_rgba(0,0,0,0.5)]`}>
-          <span className="text-[10px] font-mono text-neutral-500 text-center px-2" style={{ animation: isIdle ? "none" : "spin 1s linear infinite reverse" }}>
-            {eventLoop?.phase || "IDLE"}
+      <div className="flex-1 p-3 flex items-center justify-center relative">
+        <div className={`w-32 h-20 rounded border-2 ${isIdle ? "border-neutral-700 text-neutral-500" : "border-yellow-500 text-yellow-500"} flex flex-col items-center justify-center bg-[#0a0a0a] shadow-[0_0_15px_rgba(0,0,0,0.2)]`}>
+          <span className="text-[12px] font-mono tracking-wider">
+            Event Loop
           </span>
+          {!isIdle && eventLoop?.phase && (
+             <span className="text-[9px] font-mono mt-1 opacity-80">
+               {eventLoop.phase}
+             </span>
+          )}
         </div>
 
         {eventLoop?.currentTask && (

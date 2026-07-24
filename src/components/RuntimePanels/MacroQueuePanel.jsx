@@ -33,9 +33,11 @@ export default function MacroQueuePanel() {
           {macrotasks.length}
         </span>
       </div>
-      <div className="flex-1 p-3 overflow-y-auto flex flex-col gap-2">
+      <div className="flex-1 p-3 overflow-x-auto flex items-center gap-2 border-2 border-blue-900/30 m-2 rounded-lg relative min-h-[80px]">
+        <div className="absolute top-1 left-2 text-[10px] font-mono text-blue-500/50 uppercase tracking-widest">Macro Task Queue</div>
+        <div className="mt-4 flex flex-row gap-2 w-max">
         {macrotasks.length === 0 ? (
-          <div className="text-xs font-mono text-neutral-600 italic text-center w-full mt-2">
+          <div className="text-xs font-mono text-neutral-600 italic mt-2">
             Empty Queue
           </div>
         ) : (
@@ -47,14 +49,11 @@ export default function MacroQueuePanel() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                className="rounded border border-purple-900/50 bg-[#1a1a1a] p-2 flex items-center justify-between shadow-sm"
+                className="rounded border-2 border-blue-600/50 bg-[#1a1c24] px-3 py-2 flex items-center justify-between gap-3 shadow-sm min-w-[120px]"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-mono text-neutral-300">
+                  <span className="text-[11px] font-mono text-blue-300">
                     {task.type === "Timeout" ? "setTimeout" : task.type}
-                  </span>
-                  <span className="text-[9px] font-mono text-purple-400 bg-purple-950/50 px-1 rounded">
-                    Macrotask
                   </span>
                 </div>
                 <button 
@@ -67,6 +66,7 @@ export default function MacroQueuePanel() {
             ))}
           </AnimatePresence>
         )}
+        </div>
       </div>
     </div>
   );
