@@ -21,5 +21,7 @@ export function createFunctionExecutionContext(
     lexicalEnvironment,
     returnValue: undefined,
     isReturning: false,
+    isBreaking: false,
+    isContinuing: false,
   };
 }

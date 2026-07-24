@@ -7,6 +7,9 @@ import { executeReturnStatement } from "./executeReturnStatement.js";
 import { executeIfStatement } from "./executeIfStatement.js";
 import { executeWhileStatement } from "./executeWhileStatement.js";
 import { executeForStatement } from "./executeForStatement.js";
+import { executeSwitchStatement } from "./executeSwitchStatement.js";
+import { executeBreakStatement } from "./executeBreakStatement.js";
+import { executeContinueStatement } from "./executeContinueStatement.js";
 
 export function executeNode(node, executionContextStack, heap) {
   switch (node.type) {
@@ -33,9 +36,17 @@ export function executeNode(node, executionContextStack, heap) {
 
     case "WhileStatement":
       return executeWhileStatement(node, executionContextStack, heap);
-      
+
     case "ForStatement":
       return executeForStatement(node, executionContextStack, heap);
+    case "SwitchStatement":
+      return executeSwitchStatement(node, executionContextStack, heap);
+
+    case "BreakStatement":
+      return executeBreakStatement(node, executionContextStack);
+
+    case "ContinueStatement":
+      return executeContinueStatement(node, executionContextStack);
 
     default:
       throw new Error(`Unsupported node: ${node.type}`);

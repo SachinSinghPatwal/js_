@@ -23,6 +23,15 @@ export function executeForStatement(node, executionContextStack, heap) {
       return;
     }
 
+    if (executionContext.isBreaking) {
+      executionContext.isBreaking = false;
+      return;
+    }
+
+    if (executionContext.isContinuing) {
+      executionContext.isContinuing = false;
+    }
+
     if (node.update) {
       evaluateExpression(node.update, executionContextStack, heap);
     }

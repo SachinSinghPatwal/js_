@@ -10,5 +10,15 @@ export function executeWhileStatement(node, executionContextStack, heap) {
     if (executionContext.isReturning) {
       return;
     }
+
+    if (executionContext.isBreaking) {
+      executionContext.isBreaking = false;
+      return;
+    }
+
+    if (executionContext.isContinuing) {
+      executionContext.isContinuing = false;
+      continue;
+    }
   }
 }
