@@ -17,7 +17,7 @@ export function createFunctionExecutionContext(
     environmentRecord,
   );
 
-  populateBindings(functionObject.scope, environmentRecord);
+  populateBindings(functionObject.scope, environmentRecord, lexicalEnvironment);
 
   if (functionObject.node?.id?.name) {
     const selfBinding = createBinding(functionObject.node.id.name, "let");

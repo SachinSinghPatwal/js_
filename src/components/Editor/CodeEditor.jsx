@@ -6,7 +6,9 @@ import { formatCode } from "../../formatter/formatCode";
 import { parseCode } from "../../parser/parseCode";
 import { buildScopeTree } from "../../scope/scopeBuilder.js";
 import { initializeRuntime } from "../../engine/initializeRuntime";
-import {execute} from "../../execution/execute.js";
+import { execute } from "../../execution/execute.js";
+import { VisualizationStore } from "../../visualization/store/VisualizationStore.js";
+import { createSnapshot } from "../../visualization/snapshot/SnapshotGenerator.js";
 
 
 const baseTheme = {
@@ -103,22 +105,18 @@ const CodeEditor = () => {
 
       const runtime = initializeRuntime(scopeTree);
 
+      VisualizationStore.reset();
+      let stepCount = 0;
+      runtime.onStep = (node, rt) => {
+        VisualizationStore.addSnapshot(createSnapshot(stepCount++, node, rt));
+      };
+
       execute(parsedToAST, runtime);
 
-      // const binding = resolveIdentifier("a", runtime.lexicalEnvironment);
-
-      // console.log(binding);
-
-      // const binding1 = resolveIdentifier("a", runtime.lexicalEnvironment);
-      // const binding2 = resolveIdentifier("b", runtime.lexicalEnvironment);
-
-      // setBindingValue(binding1, 5);
-      // setBindingValue(binding2, 5);
-
-      // console.log(binding1);
-      // console.log(binding2);
-
-      // console.log(runtime);
+      console.log(
+        "Execution complete. Snapshots generated:",
+        VisualizationStore.getSnapshot().snapshots.length
+      );
     } catch (error) {
       console.error(error.message);
     }

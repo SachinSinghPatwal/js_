@@ -4,6 +4,7 @@ export class FunctionObject {
 
     this.node = node;
     this.scope = scope;
+    this.capturedEnvironment = options.capturedEnvironment ?? null;
     this.isArrow = Boolean(options.isArrow);
     this.capturedThisValue = options.capturedThisValue;
 

@@ -6,7 +6,8 @@ export function evaluateArrowFunctionExpression(
 ) {
   const executionContext = executionContextStack.current();
 
-  return new FunctionObject(node, executionContext.lexicalEnvironment, {
+  return new FunctionObject(node, node.scope, {
+    capturedEnvironment: executionContext.lexicalEnvironment,
     isArrow: true,
     capturedThisValue: executionContext.thisValue,
   });

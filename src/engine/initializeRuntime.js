@@ -22,6 +22,7 @@ export function initializeRuntime(scopeTree) {
   populateBindings(
     scopeTree,
     globalExecutionContext.lexicalEnvironment.environmentRecord,
+    globalExecutionContext.lexicalEnvironment
   );
 
   const prototypeAddress = allocateObject(heap, {
@@ -47,6 +48,8 @@ export function initializeRuntime(scopeTree) {
     microtaskQueue: [],
     macrotaskQueue: [],
   };
+
+  heap.runtime = runtime; // Expose for visualization hooks
 
   createConsole(globalExecutionContext, heap);
   createSetTimeout(globalExecutionContext, runtime);

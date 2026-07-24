@@ -15,26 +15,60 @@ export function buildScopeTree(ast) {
     },
 
     FunctionDeclaration(node, state, c) {
-      // Create the function scope first
       const functionScope = createScope("Function", state);
-
-      // Register the function in the parent scope and store a reference
-      // to its function scope
       registerDeclaration(state, node.id.name, "function", node, functionScope);
-
-      // Connect the function scope to its parent
       state.children.push(functionScope);
+      node.scope = functionScope; // Attach for runtime
 
-      // Register parameters in the function scope
       for (const param of node.params) {
         extractPatternNames(param).forEach((name) => {
           registerDeclaration(functionScope, name, "parameter");
         });
       }
 
-      // Traverse the function body using the function scope
       for (const statement of node.body.body) {
         c(statement, functionScope);
+      }
+    },
+
+    FunctionExpression(node, state, c) {
+      const functionScope = createScope("Function", state);
+      state.children.push(functionScope);
+      node.scope = functionScope; // Attach for runtime
+
+      if (node.id) {
+        // Named function expressions bind their name within their own scope
+        registerDeclaration(functionScope, node.id.name, "function", node, functionScope);
+      }
+
+      for (const param of node.params) {
+        extractPatternNames(param).forEach((name) => {
+          registerDeclaration(functionScope, name, "parameter");
+        });
+      }
+
+      for (const statement of node.body.body) {
+        c(statement, functionScope);
+      }
+    },
+
+    ArrowFunctionExpression(node, state, c) {
+      const functionScope = createScope("Function", state);
+      state.children.push(functionScope);
+      node.scope = functionScope; // Attach for runtime
+
+      for (const param of node.params) {
+        extractPatternNames(param).forEach((name) => {
+          registerDeclaration(functionScope, name, "parameter");
+        });
+      }
+
+      if (node.body.type === "BlockStatement") {
+        for (const statement of node.body.body) {
+          c(statement, functionScope);
+        }
+      } else {
+        c(node.body, functionScope);
       }
     },
 

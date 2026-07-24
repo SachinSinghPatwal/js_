@@ -23,7 +23,7 @@ export function callFunction(
 
   const functionExecutionContext = createFunctionExecutionContext(
     functionObject,
-    functionObject.scope ?? currentExecutionContext.lexicalEnvironment,
+    functionObject.capturedEnvironment ?? currentExecutionContext.lexicalEnvironment,
     args,
     newTarget,
   );

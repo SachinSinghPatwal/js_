@@ -25,6 +25,10 @@ import { evaluateExportAllDeclaration } from "./evaluateExportAllDeclaration.js"
 export function executeNode(node, executionContextStack, heap) {
   if (!node) return;
 
+  if (heap.runtime?.onStep) {
+    heap.runtime.onStep(node, heap.runtime);
+  }
+
   switch (node.type) {
     case "Program":
       return executeProgram(node, executionContextStack, heap);

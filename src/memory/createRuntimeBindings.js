@@ -2,7 +2,7 @@ import { createBinding } from "../runtime/createBinding.js";
 import { FunctionObject } from "./FunctionObject.js";
 // import { UNINITIALIZED } from "../runtime/constant.js";
 
-export function populateBindings(scope, environmentRecord) {
+export function populateBindings(scope, environmentRecord, lexicalEnvironment = null) {
   for (const [name, variable] of scope.variables) {
     const binding = createBinding(name, variable.kind);
     const UNINITIALIZED = Symbol("UNINITIALIZED");
@@ -27,6 +27,7 @@ export function populateBindings(scope, environmentRecord) {
         binding.value = new FunctionObject(
           variable.node,
           variable.functionScope,
+          { capturedEnvironment: lexicalEnvironment }
         );
         binding.initialized = true;
         break;
