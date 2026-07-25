@@ -39,7 +39,7 @@ export default function EventLoopPanel() {
 
   return (
     <div className="h-full w-full flex flex-col bg-[#1e1e1e]">
-      <div className="px-3 py-1.5 border-b border-[#252526] bg-[#252526] flex items-center justify-between">
+      <div className="px-3 py-[6.6px] border-b border-[#252526] bg-[#252526] flex items-center justify-between">
         <span className="text-[11px] font-mono text-[#d4d4d4] uppercase tracking-wider font-semibold">
           Event Loop
         </span>

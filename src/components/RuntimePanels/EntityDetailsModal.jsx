@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useEffect } from "react";
 import { VisualizationStore } from "../../visualization/store/VisualizationStore";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -21,21 +21,32 @@ function formatVal(val) {
   return <span className="text-[#d4d4d4]">{String(val)}</span>;
 }
 
-function RenderJSONTree({ data, depth = 0 }) {
+function RenderJSONTree({ data, depth = 0, seen = new Set() }) {
   if (data === null || data === undefined || typeof data !== "object") {
     return formatVal(data);
   }
+
+  if (depth > 5) {
+    return <span className="text-[#858585] italic">[Object]</span>;
+  }
+
+  if (seen.has(data)) {
+    return <span className="text-[#858585] italic">[Circular Ref]</span>;
+  }
+
+  const nextSeen = new Set(seen);
+  nextSeen.add(data);
 
   if (data instanceof Map) {
     const entries = Array.from(data.entries());
     if (entries.length === 0) return <span className="text-[#858585] italic">Map(0) {}</span>;
     return (
       <div className="flex flex-col gap-1 pl-2 border-l border-[#2d2d2d] my-1 font-mono text-[11px]">
-        {entries.map(([k, v], idx) => (
+        {entries.slice(0, 10).map(([k, v], idx) => (
           <div key={idx} className="flex items-start gap-2">
             <span className="text-[#e2b714] font-semibold">{String(k)}</span>
             <span className="text-[#858585]">:</span>
-            <RenderJSONTree data={v} depth={depth + 1} />
+            <RenderJSONTree data={v} depth={depth + 1} seen={nextSeen} />
           </div>
         ))}
       </div>
@@ -46,11 +57,11 @@ function RenderJSONTree({ data, depth = 0 }) {
     if (data.length === 0) return <span className="text-[#858585] italic">[]</span>;
     return (
       <div className="flex flex-col gap-1 pl-2 border-l border-[#2d2d2d] my-1 font-mono text-[11px]">
-        {data.map((item, idx) => (
+        {data.slice(0, 10).map((item, idx) => (
           <div key={idx} className="flex items-start gap-2">
             <span className="text-[#858585]">[{idx}]</span>
             <span className="text-[#858585]">:</span>
-            <RenderJSONTree data={item} depth={depth + 1} />
+            <RenderJSONTree data={item} depth={depth + 1} seen={nextSeen} />
           </div>
         ))}
       </div>
@@ -65,11 +76,11 @@ function RenderJSONTree({ data, depth = 0 }) {
 
   return (
     <div className="flex flex-col gap-1 pl-2 border-l border-[#2d2d2d] my-1 font-mono text-[11px]">
-      {keys.map((key) => (
+      {keys.slice(0, 15).map((key) => (
         <div key={key} className="flex items-start gap-2">
           <span className="text-[#e2b714]">{key}</span>
           <span className="text-[#858585]">:</span>
-          <RenderJSONTree data={data[key]} depth={depth + 1} />
+          <RenderJSONTree data={data[key]} depth={depth + 1} seen={nextSeen} />
         </div>
       ))}
     </div>
@@ -81,6 +92,19 @@ export default function EntityDetailsModal() {
     (listener) => VisualizationStore.subscribe(listener),
     () => VisualizationStore.getSnapshot()
   );
+
+  useEffect(() => {
+    if (!modalData) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        VisualizationStore.setModalData(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [modalData]);
 
   if (!modalData) return null;
 

@@ -104,6 +104,8 @@
     }
   ],
   "colors": {
+    "editor.focusBorder": "green",
+    "editor.lineHighlightBackground": "#383840",
     "editor.background": "#1e1e1e",
     "editor.foreground": "#D4D4D4",
     "editorLineNumber.foreground": "#5A5A5A",
