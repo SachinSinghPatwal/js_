@@ -1,7 +1,6 @@
 import Editor, { loader } from "@monaco-editor/react";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import Dark26Theme from "./Theme/dark26.json";
-import { Play, SquareDashedText } from "lucide-react";
 import { formatCode } from "../../formatter/formatCode";
 import { parseCode } from "../../parser/parseCode";
 import { buildScopeTree } from "../../scope/scopeBuilder.js";

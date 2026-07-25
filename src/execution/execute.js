@@ -20,6 +20,13 @@ export function execute(ast, runtime) {
     // Process exactly one macrotask if available
     if (macrotaskQueue.length > 0) {
       const task = macrotaskQueue.shift();
+      
+      if (task.timerId && runtime.webAPIs) {
+        runtime.webAPIs.delete(task.timerId);
+        // Force a snapshot to show WebAPI -> Macrotask transfer visually
+        if (runtime.onStep) runtime.onStep(null, runtime);
+      }
+      
       callFunction(task.callback, task.args, executionContextStack, heap, task.thisValue);
     }
   }

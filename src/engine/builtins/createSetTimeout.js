@@ -7,7 +7,8 @@ export function createSetTimeout(globalExecutionContext, runtime) {
     isNative: true,
     name: "setTimeout",
     nativeCall(args) {
-      const callback = args[0];
+      const callbackArg = args[0];
+      const callback = typeof callbackArg === "number" ? runtime.heap.get(callbackArg) : callbackArg;
 
       if (!callback || typeof callback !== "object") {
         throw new TypeError("setTimeout requires a callback function");
@@ -16,13 +17,22 @@ export function createSetTimeout(globalExecutionContext, runtime) {
       // We extract any additional arguments passed to setTimeout
       // e.g., setTimeout(cb, 1000, arg1, arg2)
       const callbackArgs = args.slice(2);
+      const delay = typeof args[1] === "number" ? args[1] : 0;
 
       // In a real browser, this would wait for 'delay' ms.
-      // In our synchronous visualizer simulation, we instantly push it to the macrotask queue.
-      // If we wanted to accurately simulate time, we could add a `timeoutAt` field
-      // and only drain it when the visualizer's global "clock" reaches that time.
+      // In our synchronous visualizer simulation, we add to web APIs to show it,
+      // take a snapshot, and then immediately push it to the macrotask queue.
+      const timerId = Date.now() + Math.random();
+      
+      runtime.webAPIs.set(timerId, { type: 'Timeout', delay: delay });
+      
+      if (runtime.onStep) {
+        runtime.onStep(null, runtime);
+      }
+
       runtime.macrotaskQueue.push({
         type: 'Timeout',
+        timerId: timerId,
         callback,
         args: callbackArgs,
         thisValue: undefined, // setTimeout callbacks default to global/undefined this

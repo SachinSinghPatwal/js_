@@ -8,7 +8,6 @@ export function createConsole(globalExecutionContext, runtime) {
     log: {
       isNative: true,
       name: "log",
-      // eslint-disable-next-line no-unused-vars
       nativeCall(args, executionContextStack, currentHeap) {
         // Resolve arguments by fetching from heap if they are addresses
         const resolvedArgs = args.map((arg) => {
@@ -26,6 +25,15 @@ export function createConsole(globalExecutionContext, runtime) {
           type: 'log',
           args: resolvedArgs
         });
+        
+        const logId = Date.now() + Math.random();
+        runtime.webAPIs.set(logId, { type: 'console.log' });
+        
+        if (runtime.onStep) {
+          runtime.onStep(null, runtime);
+        }
+        
+        runtime.webAPIs.delete(logId);
         
         return undefined;
       },

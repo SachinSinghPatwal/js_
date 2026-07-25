@@ -12,8 +12,11 @@ export function createPromise(globalExecutionContext, runtime) {
       isNative: true,
       name: "then",
       nativeCall(args, _, __, thisAddress) {
-        const onFulfilled = args[0];
-        const onRejected = args[1];
+        const onFulfilledArg = args[0];
+        const onFulfilled = typeof onFulfilledArg === "number" ? heap.get(onFulfilledArg) : onFulfilledArg;
+        
+        const onRejectedArg = args[1];
+        const onRejected = typeof onRejectedArg === "number" ? heap.get(onRejectedArg) : onRejectedArg;
 
         const promiseObj = heap.get(thisAddress);
 
@@ -126,7 +129,8 @@ export function createPromise(globalExecutionContext, runtime) {
         throw new TypeError("Promise constructor cannot be invoked without 'new'");
       }
 
-      const executor = args[0];
+      const executorArg = args[0];
+      const executor = typeof executorArg === "number" ? heap.get(executorArg) : executorArg;
       if (!executor || typeof executor !== "object") {
         throw new TypeError("Promise resolver is not a function");
       }

@@ -47,6 +47,7 @@ export function initializeRuntime(scopeTree) {
     heap,
     microtaskQueue: [],
     macrotaskQueue: [],
+    webAPIs: new Map(),
     consoleLogs: [],
   };
 
