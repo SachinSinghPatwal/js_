@@ -3,7 +3,7 @@ import { getBindingValue } from "../../runtime/getBindingValues.js";
 
 export function evaluateIdentifier(node, executionContextStack) {
   if (node.name === "this") {
-    return executionContextStack.current().thisValue;
+    return executionContextStack.current().thisBinding;
   }
 
   if (node.name === "new.target") {

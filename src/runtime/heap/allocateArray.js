@@ -1,3 +1,3 @@
 export function allocateArray(heap, array) {
-  return heap.allocate(array);
+  return heap.allocate(array, 'Array');
 }

@@ -11,7 +11,7 @@ export function evaluateCallExpression(node, executionContextStack, heap) {
   // --- super(...args) — constructor chaining ---
   if (node.callee.type === "Super") {
     const executionContext = executionContextStack.current();
-    const thisAddress = executionContext.thisValue;
+    const thisAddress = executionContext.thisBinding;
 
     // The currently running constructor keeps its superClass reference
     // Walk the execution context stack to find the constructor's superClass
@@ -34,7 +34,7 @@ export function evaluateCallExpression(node, executionContextStack, heap) {
     node.callee.object.type === "Super"
   ) {
     const executionContext = executionContextStack.current();
-    receiverAddress = executionContext.thisValue;
+    receiverAddress = executionContext.thisBinding;
 
     // Find the parent prototype to look up the method
     const homeObject = executionContext.homeObject;

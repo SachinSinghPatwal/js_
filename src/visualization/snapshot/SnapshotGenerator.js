@@ -60,9 +60,35 @@ export function createSnapshot(step, currentNode, runtime) {
 
   const clonedRuntime = deepClone(runtime);
 
+  // Generate categorized heap view for the visualization
+  let heapCategorized = null;
+  if (runtime.heap && typeof runtime.heap.getAllCategorized === 'function') {
+    try {
+      heapCategorized = deepClone(runtime.heap.getAllCategorized());
+    } catch {
+      // Fallback if heap categorization fails
+    }
+  }
+
+  // Determine snapshot type based on event loop phase
+  let snapshotType = 'execution';
+  const phase = runtime.eventLoop?.phase;
+  if (phase && phase !== 'IDLE' && phase !== 'EXECUTING_SYNC') {
+    snapshotType = 'eventLoop';
+  }
+  if (runtime.closureEvents?.length > 0) {
+    snapshotType = 'closure';
+  }
+
   return {
     step,
-    currentNode, // We usually don't need to deep clone the AST node itself as it's static
+    currentNode,
     runtime: clonedRuntime,
+    snapshotType,
+    heapCategorized,
+    eventLoopPhase: runtime.eventLoop ? {
+      phase: runtime.eventLoop.phase,
+      currentPhaseStep: runtime.eventLoop.currentPhaseStep,
+    } : null,
   };
 }

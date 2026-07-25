@@ -1,9 +1,16 @@
 import { createLexicalEnvironment } from "./createLexicalEnvironment.js";
 
+let _ecIdCounter = 0;
+
+export function resetEcIdCounter() {
+  _ecIdCounter = 0;
+}
+
 export function createExecutionContext(type, scope) {
   const lexicalEnvironment = createLexicalEnvironment(scope);
 
   return {
+    id: ++_ecIdCounter,
     type,
     scope,
 
@@ -11,6 +18,12 @@ export function createExecutionContext(type, scope) {
 
     // Initially both point to the same environment
     variableEnvironment: lexicalEnvironment,
+
+    // this binding lives inside the Execution Context (not in heap)
+    thisBinding: undefined,
+
+    // Outer environment reference (for scope chain visualization)
+    outerReference: lexicalEnvironment.outer || null,
 
     // Control-flow metadata
     labelStack: [],
@@ -25,6 +38,5 @@ export function createExecutionContext(type, scope) {
 
     // Exception state
     pendingException: undefined,
-    thisValue: undefined,
   };
 }

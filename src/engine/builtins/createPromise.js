@@ -33,7 +33,7 @@ export function createPromise(globalExecutionContext, runtime) {
           PromiseRejectReactions: [],
         };
         Object.defineProperty(chainedPromiseObj, "__proto__", { value: promisePrototypeAddress, writable: true });
-        const chainedPromiseAddress = allocateObject(heap, chainedPromiseObj);
+        const chainedPromiseAddress = allocateObject(heap, chainedPromiseObj, 'Promise');
 
         const chainedResolve = {
           isNative: true,
@@ -61,7 +61,7 @@ export function createPromise(globalExecutionContext, runtime) {
 
         const createReaction = (handler, defaultResolution) => {
           return {
-            type: 'PromiseReaction',
+            type: 'PromiseReactionJob',
             callback: {
               isNative: true,
               nativeCall() {
@@ -116,7 +116,7 @@ export function createPromise(globalExecutionContext, runtime) {
     },
   };
 
-  const promisePrototypeAddress = allocateObject(heap, promisePrototypeObj);
+  const promisePrototypeAddress = allocateObject(heap, promisePrototypeObj, 'Object');
   promisePrototypeObj.then.nativeCall.__proto__ = null; // Internal safety
   promisePrototypeObj.catch.nativeCall.__proto__ = null;
 
@@ -143,7 +143,7 @@ export function createPromise(globalExecutionContext, runtime) {
       };
       Object.defineProperty(promiseObj, "__proto__", { value: promisePrototypeAddress, writable: true });
 
-      const promiseAddress = allocateObject(heap, promiseObj);
+      const promiseAddress = allocateObject(heap, promiseObj, 'Promise');
 
       const resolveNative = {
         isNative: true,
@@ -193,7 +193,7 @@ export function createPromise(globalExecutionContext, runtime) {
         PromiseRejectReactions: [],
       };
       Object.defineProperty(promiseObj, "__proto__", { value: promisePrototypeAddress, writable: true });
-      return allocateObject(heap, promiseObj);
+      return allocateObject(heap, promiseObj, 'Promise');
     },
   };
 
@@ -209,7 +209,7 @@ export function createPromise(globalExecutionContext, runtime) {
         PromiseRejectReactions: [],
       };
       Object.defineProperty(promiseObj, "__proto__", { value: promisePrototypeAddress, writable: true });
-      return allocateObject(heap, promiseObj);
+      return allocateObject(heap, promiseObj, 'Promise');
     },
   };
 

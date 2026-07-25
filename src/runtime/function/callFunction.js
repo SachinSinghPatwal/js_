@@ -28,10 +28,11 @@ export function callFunction(
     newTarget,
   );
 
+  // Set the this binding on the execution context
   if (functionObject.isArrow) {
-    functionExecutionContext.thisValue = functionObject.capturedThisValue;
+    functionExecutionContext.thisBinding = functionObject.capturedThisValue;
   } else {
-    functionExecutionContext.thisValue = thisValue;
+    functionExecutionContext.thisBinding = thisValue;
   }
 
   // Propagate class-related metadata for super() and super.method()
@@ -57,8 +58,19 @@ export function callFunction(
 
   const returnValue = functionExecutionContext.returnValue;
 
+  // Detect closure: if the return value is a function that captured this environment
+  if (returnValue && typeof returnValue === 'object' && returnValue.type === 'FunctionObject') {
+    // Emit closure event for visualization
+    if (heap.runtime?.onClosureCreated) {
+      heap.runtime.onClosureCreated({
+        poppedContext: functionExecutionContext,
+        returnedFunction: returnValue,
+        capturedEnvironment: returnValue.capturedEnvironment || returnValue.scope,
+      });
+    }
+  }
+
   executionContextStack.pop();
 
   return returnValue;
 }
-

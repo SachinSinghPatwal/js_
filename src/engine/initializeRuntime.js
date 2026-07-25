@@ -1,4 +1,4 @@
-import { createExecutionContext } from "../runtime/createExecutionContext.js";
+import { createExecutionContext, resetEcIdCounter } from "../runtime/createExecutionContext.js";
 import { populateBindings } from "../memory/createRuntimeBindings.js";
 import ExecutionContextStack from "../runtime/callStack/ExecutionContextStack.js";
 import Heap from "../runtime/heap/heap.js";
@@ -11,11 +11,23 @@ import { createSetTimeout } from "./builtins/createSetTimeout.js";
 import { createPromise } from "./builtins/createPromise.js";
 
 export function initializeRuntime(scopeTree) {
+  // Reset EC ID counter for fresh execution
+  resetEcIdCounter();
+
   const heap = new Heap();
 
   const executionContextStack = new ExecutionContextStack();
 
   const globalExecutionContext = createExecutionContext("global", scopeTree);
+
+  // Create the global object in the heap
+  const globalObjectAddress = allocateObject(heap, {
+    type: 'GlobalObject',
+    name: 'window',
+  }, 'Object');
+
+  // Set the this binding on the Global EC to point to the global object in heap
+  globalExecutionContext.thisBinding = globalObjectAddress;
 
   executionContextStack.push(globalExecutionContext);
 
@@ -49,6 +61,35 @@ export function initializeRuntime(scopeTree) {
     macrotaskQueue: [],
     webAPIs: new Map(),
     consoleLogs: [],
+    globalObjectAddress,
+
+    // Host environment: 'browser' or 'node'
+    hostEnvironment: 'browser',
+
+    // Event loop phase tracking for visualization
+    eventLoop: {
+      phase: 'IDLE',
+      currentPhaseStep: null,
+      phases: [
+        'CHECK_STACK_EMPTY',
+        'DRAIN_MICROTASKS',
+        'RENDER_OPPORTUNITY',
+        'TAKE_MACROTASK',
+        'CREATE_EC',
+        'EXECUTE',
+      ],
+      phasesNode: [
+        'CHECK_STACK_EMPTY',
+        'DRAIN_NEXTTICK',
+        'DRAIN_MICROTASKS',
+        'TAKE_MACROTASK',
+        'CREATE_EC',
+        'EXECUTE',
+      ],
+    },
+
+    // Closure events for visualization
+    closureEvents: [],
   };
 
   heap.runtime = runtime; // Expose for visualization hooks
@@ -59,5 +100,3 @@ export function initializeRuntime(scopeTree) {
 
   return runtime;
 }
-
-

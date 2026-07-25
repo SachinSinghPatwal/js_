@@ -9,6 +9,6 @@ export function evaluateArrowFunctionExpression(
   return new FunctionObject(node, node.scope, {
     capturedEnvironment: executionContext.lexicalEnvironment,
     isArrow: true,
-    capturedThisValue: executionContext.thisValue,
+    capturedThisValue: executionContext.thisBinding,
   });
 }

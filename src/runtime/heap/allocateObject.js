@@ -1,5 +1,3 @@
-export function allocateObject(heap, object) {
-  // console.log("Heap received:", heap);
-  // console.log("Object:", object);
-  return heap.allocate(object);
+export function allocateObject(heap, object, typeTag = 'Object') {
+  return heap.allocate(object, typeTag);
 }

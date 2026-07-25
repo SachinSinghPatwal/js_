@@ -3,6 +3,12 @@ import { createLexicalEnvironment } from "../createLexicalEnvironment.js";
 import { populateBindings } from "../../memory/createRuntimeBindings.js";
 import { createBinding } from "../createBinding.js";
 
+let _funcEcIdCounter = 1000;
+
+export function resetFuncEcIdCounter() {
+  _funcEcIdCounter = 1000;
+}
+
 export function createFunctionExecutionContext(
   functionObject,
   outerLexicalEnvironment,
@@ -37,11 +43,18 @@ export function createFunctionExecutionContext(
   environmentRecord.bindings.set("new.target", newTargetBinding);
 
   return {
+    id: ++_funcEcIdCounter,
     type: "function",
     scope: functionObject.scope,
     lexicalEnvironment,
     variableEnvironment: lexicalEnvironment,
-    thisValue: undefined,
+
+    // this binding lives inside the Execution Context
+    thisBinding: undefined,
+
+    // Outer environment reference for scope chain visualization
+    outerReference: outerLexicalEnvironment || null,
+
     newTarget,
     returnValue: undefined,
     isReturning: false,

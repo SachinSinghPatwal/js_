@@ -24,14 +24,14 @@ export function createSetTimeout(globalExecutionContext, runtime) {
       // take a snapshot, and then immediately push it to the macrotask queue.
       const timerId = Date.now() + Math.random();
       
-      runtime.webAPIs.set(timerId, { type: 'Timeout', delay: delay });
+      runtime.webAPIs.set(timerId, { type: 'Timer', label: 'setTimeout', delay: delay });
       
       if (runtime.onStep) {
         runtime.onStep(null, runtime);
       }
 
       runtime.macrotaskQueue.push({
-        type: 'Timeout',
+        type: 'TimerTask',
         timerId: timerId,
         callback,
         args: callbackArgs,
