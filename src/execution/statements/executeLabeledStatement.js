@@ -1,4 +1,4 @@
-import { executeNode } from "./executeNode.js";
+import { executeNode } from "../executeNode.js";
 
 export function executeLabeledStatement(node, executionContextStack, heap) {
   const executionContext = executionContextStack.current();

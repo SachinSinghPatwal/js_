@@ -1,6 +1,6 @@
 
-import { createBinding } from "../../runtime/createBinding.js";
-import { setBindingValue } from "../../runtime/setBindingValues.js";
+import { createBinding } from "../../runtime/environment/createBinding.js";
+import { setBindingValue } from "../../runtime/environment/setBindingValues.js";
 
 export function createSetTimeout(globalExecutionContext, runtime) {
   const setTimeoutNative = {

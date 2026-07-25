@@ -1,6 +1,6 @@
 import { allocateObject } from "../../runtime/heap/allocateObject.js";
 import { evaluateExpression } from "./evaluateExpression.js";
-import { FunctionObject } from "../../memory/FunctionObject.js";
+import { FunctionObject } from "../../runtime/FunctionObject.js";
 import { callFunction } from "../../runtime/function/callFunction.js";
 
 export function evaluateObjectExpression(node, executionContextStack, heap) {

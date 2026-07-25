@@ -1,6 +1,6 @@
 import { allocateObject } from "../../runtime/heap/allocateObject.js";
-import { createBinding } from "../../runtime/createBinding.js";
-import { setBindingValue } from "../../runtime/setBindingValues.js";
+import { createBinding } from "../../runtime/environment/createBinding.js";
+import { setBindingValue } from "../../runtime/environment/setBindingValues.js";
 import { callFunction } from "../../runtime/function/callFunction.js";
 
 export function createPromise(globalExecutionContext, runtime) {

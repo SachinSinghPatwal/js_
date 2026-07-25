@@ -1,5 +1,5 @@
-import { executeNode } from "./executeNode.js";
-import { evaluateExpression } from "./expressions/evaluateExpression.js";
+import { executeNode } from "../executeNode.js";
+import { evaluateExpression } from "../expressions/evaluateExpression.js";
 
 export function executeForStatement(node, executionContextStack, heap) {
   if (node.init) {

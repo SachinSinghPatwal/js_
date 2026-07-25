@@ -1,4 +1,4 @@
-import { evaluateExpression } from "./expressions/evaluateExpression.js";
+import { evaluateExpression } from "../expressions/evaluateExpression.js";
 
 export function executeReturnStatement(node, executionContextStack, heap) {
   const executionContext = executionContextStack.current();

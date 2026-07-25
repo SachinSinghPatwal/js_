@@ -112,10 +112,10 @@ function App() {
           {/* Editor & Console Pane */}
           <Panel
             defaultSize={35}
-            minSize={15}
+            minSize={28}
             className="bg-[#1e1e1e] rounded-l-lg border-r border-[#252526]"
           >
-            <PanelWidthGuard minWidth={350} label="Editor & Console">
+            <PanelWidthGuard minWidth={280} minHeight={150} label="Editor & Console">
               <div className="flex flex-col h-full w-full">
                 {/* Code Editor */}
                 <div
@@ -146,19 +146,21 @@ function App() {
           <ResizeHandle />
 
           {/* Execution Stage & Call Stack / Event Loop */}
-          <Panel defaultSize={40} minSize={20} className="bg-[#1e1e1e]">
-            <PanelWidthGuard minWidth={280} label="Execution Stage">
+          <Panel defaultSize={40} minSize={32} className="bg-[#1e1e1e]">
+            <PanelWidthGuard minWidth={300} minHeight={150} label="Execution Stage & Stack">
               <PanelGroup orientation="vertical">
-                <Panel defaultSize={65} minSize={25} className="flex flex-col">
+                {/* Execution Stage Panel (55%) */}
+                <Panel defaultSize={55} minSize={25} className="flex flex-col">
                   <ExecutionStagePanel />
                 </Panel>
 
                 {panels.stack && (
                   <>
                     <HorizontalResizeHandle />
+                    {/* Call Stack & Event Loop Panel (45%) */}
                     <Panel
-                      defaultSize={35}
-                      minSize={20}
+                      defaultSize={45}
+                      minSize={25}
                       className="border-t border-[#252526]"
                     >
                       <div className="flex flex-row h-full w-full">
@@ -182,13 +184,13 @@ function App() {
               <ResizeHandle />
               <Panel
                 defaultSize={25}
-                minSize={15}
+                minSize={24}
                 className="bg-[#1e1e1e] rounded-r-lg border-l border-[#252526]"
               >
-                <PanelWidthGuard minWidth={200} label="Heap & Queues">
+                <PanelWidthGuard minWidth={240} minHeight={150} label="Heap & Queues">
                   <PanelGroup orientation="vertical">
                     {panels.heap && (
-                      <Panel defaultSize={40} minSize={20}>
+                      <Panel defaultSize={40} minSize={25}>
                         <HeapPanel />
                       </Panel>
                     )}
@@ -196,10 +198,11 @@ function App() {
                     {panels.heap && panels.queues && <HorizontalResizeHandle />}
 
                     {panels.queues && (
-                      <Panel defaultSize={60} minSize={20}>
+                      <Panel defaultSize={60} minSize={30}>
                         <PanelGroup orientation="vertical">
                           <Panel
                             defaultSize={33}
+                            minSize={22}
                             className="border-t border-[#252526]"
                           >
                             <MicroQueuePanel />
@@ -207,6 +210,7 @@ function App() {
                           <HorizontalResizeHandle />
                           <Panel
                             defaultSize={33}
+                            minSize={22}
                             className="border-t border-[#252526]"
                           >
                             <MacroQueuePanel />
@@ -214,6 +218,7 @@ function App() {
                           <HorizontalResizeHandle />
                           <Panel
                             defaultSize={34}
+                            minSize={22}
                             className="border-t border-[#252526]"
                           >
                             <WebAPIPanel />

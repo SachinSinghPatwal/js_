@@ -1,363 +1,100 @@
-# Architectural Decisions
+# Architectural Decision Records (ADRs)
 
-## Decision 000
-
-Title
-
-Source of Truth
-
-Status
-
-LOCKED
-
-Decision
-
-The documents inside /docs are the project's source of truth.
-
-If an explanation in a chat conflicts with these documents, the documents take precedence unless a new decision explicitly updates them.
-
-Reason
-
-Prevents architectural drift across conversations and ensures consistency.
+## Decision 000 — Source of Truth
+- **Status**: LOCKED
+- **Decision**: The documents inside `/docs` are the project's source of truth. If chat explanations conflict, these documents take precedence.
+- **Reason**: Prevents architectural drift across conversations and maintains technical consistency.
 
 ---
 
-## Decision 001
-
-Title
-
-Project Type
-
-Status
-
-LOCKED
-
-Decision
-
-This project simulates JavaScript engine execution instead of acting as a compiler.
-
-Reason
-
-The primary goal is education.
+## Decision 001 — V8 Engine Simulation Over Compiler
+- **Status**: LOCKED
+- **Decision**: This project simulates JavaScript engine (V8) runtime execution and Host Environment (Browser / Node.js) interactions instead of acting as a compiler.
+- **Reason**: Educational correctness over visual simplicity.
 
 ---
 
-## Decision 002
-
-Title
-
-AST Parser
-
-Status
-
-LOCKED
-
-Decision
-
-Use Acorn.
-
-Reason
-
-Fast, lightweight, ESTree compliant.
+## Decision 002 — AST Parser
+- **Status**: LOCKED
+- **Decision**: Use Acorn to convert JavaScript source code into an ESTree-compliant Abstract Syntax Tree.
 
 ---
 
-## Decision 003
-
-Title
-
-AST Traversal
-
-Status
-
-LOCKED
-
-Decision
-
-Use acorn-walk.
-
-Reason
-
-Cleaner recursive traversal.
+## Decision 003 — AST Traversal
+- **Status**: LOCKED
+- **Decision**: Use `acorn-walk` for recursive AST node traversal.
 
 ---
 
-## Decision 004
-
-Title
-
-Scope Representation
-
-Status
-
-LOCKED
-
-Decision
-
-Scopes are connected as a tree.
-
-Each scope contains
-
-- parent
-- children
-- bindings
+## Decision 004 — Scope Blueprint
+- **Status**: LOCKED
+- **Decision**: Scopes are built statically before execution into a Scope Tree hierarchy containing parent/children references and static declaration metadata.
 
 ---
 
-## Decision 005
-
-Title
-
-Binding Storage
-
-Status
-
-LOCKED
-
-Decision
-
-Bindings are stored using Map.
-
-Reason
-
-O(1) lookup.
+## Decision 005 — Environment Record Storage
+- **Status**: LOCKED
+- **Decision**: Variable and function bindings inside Environment Records are stored using JavaScript `Map` data structures for $O(1)$ lookup.
 
 ---
 
-## Decision 006
-
-Title
-
-Function Body Block
-
-Status
-
-LOCKED
-
-Decision
-
-Function body does not create an extra Block scope.
-
-Nested blocks do.
+## Decision 006 — Execution Context Architecture
+- **Status**: LOCKED
+- **Decision**: Every Execution Context owns an `id`, `thisBinding` (which lives inside the EC, not in the heap), an `outerReference` (linking scope chain), and references to a Lexical Environment and Variable Environment.
 
 ---
 
-## Decision 007
-
-Title
-
-Identifier Resolution
-
-Status
-
-LOCKED
-
-Decision
-
-Identifiers are resolved during execution.
-
-Not during scope building.
-
-Reason
-
-Matches JavaScript execution.
+## Decision 007 — Identifier Resolution Strategy
+- **Status**: LOCKED
+- **Decision**: Identifiers are resolved at runtime by traversing the active Lexical Environment chain (`outerReference`). The static Scope Tree is never consulted during runtime variable lookup.
 
 ---
 
-## Decision 008
+## Decision 008 — Typed Memory Heap Architecture
+- **Status**: LOCKED
+- **Decision**: All non-primitive reference values (Objects, Functions, Promises, Arrays, Closures) are allocated in a typed Heap with address pointers (`0x0001`, `0x0002`).
+- **Reason**: Accurately models V8 memory pointers vs. primitive stack bindings.
 
-Title
+---
 
-Expression Evaluation
+## Decision 009 — Function Closures & [[Environment]] Pointer
+- **Status**: LOCKED
+- **Decision**: Function objects created in the Heap store a hidden `[[Environment]]` reference to their outer declaration scope. When called, the new Function EC's `outerReference` points to `[[Environment]]`.
 
-Status
+---
 
-LOCKED
+## Decision 010 — Phase-by-Phase Event Loop Simulation
+- **Status**: LOCKED
+- **Decision**: The Event Loop is modeled as a formal step pipeline: `CHECK_STACK_EMPTY` ➔ `DRAIN_MICROTASKS` ➔ `RENDER_OPPORTUNITY` ➔ `TAKE_MACROTASK` ➔ `CREATE_EC`.
+- **Reason**: Teaches users that microtasks drain to completion before rendering and before macrotasks execute.
 
-Decision
+---
 
-Expressions are never evaluated during scope building or memory creation.
+## Decision 011 — Host Environment Separation
+- **Status**: LOCKED
+- **Decision**: Web APIs (`setTimeout`, `fetch`, `console`) live inside the Host Environment container, separate from the V8 Engine Core.
 
-Evaluation occurs only during execution.
+---
 
-## Decision 009
+## Decision 012 — Console Output Line Numbering
+- **Status**: LOCKED
+- **Decision**: Console output entries capture `line: runtime.currentNode.loc.start.line` from the active AST node and render line numbers (`Line 5`) in the output panel.
 
-Title
+---
 
-Execution Context Ownership
+## Decision 013 — Inspector Modal Circular Reference Protection
+- **Status**: LOCKED
+- **Decision**: `EntityDetailsModal.jsx` uses a `Set` tracking mechanism and max depth limit (`depth > 5`) in `RenderJSONTree` to prevent infinite recursion freezes during live playback.
 
-Status
+---
 
-LOCKED
+## Decision 014 — Keyboard Accessibility (Esc Dismiss)
+- **Status**: LOCKED
+- **Decision**: A global `window.addEventListener('keydown')` listener closes the Entity Details Modal when `Escape` is pressed.
 
-Decision
+---
 
-Execution Contexts reference the corresponding Scope Tree node.
-
-They do not duplicate scopes or declarations.
-
-Reason
-
-The Scope Tree is the static blueprint.
-Execution Contexts are runtime objects that operate on that blueprint.
-
-## Decision 010
-
-Title
-
-Lexical Environment Ownership
-
-Status
-
-LOCKED
-
-Decision
-
-Each Execution Context owns exactly one Lexical Environment.
-
-The Lexical Environment is a runtime object created from the corresponding Scope Tree node during execution.
-
-Reason
-
-Separates the static blueprint from runtime memory while matching JavaScript engine behavior.
-
-## Decision 011
-
-Title
-
-Environment Record Ownership
-
-Status
-
-LOCKED
-
-Decision
-
-Each Lexical Environment owns exactly one Environment Record.
-
-The Environment Record stores runtime bindings created during Memory Creation.
-
-Reason
-
-Separates the runtime container (Lexical Environment) from the runtime storage (Environment Record).
-
-Decision 011 — Environment Record Ownership
-Problem
-
-An Execution Context requires a runtime memory structure to store variable bindings created during the Memory Creation phase. The Scope Tree only contains static declaration metadata and cannot store runtime state.
-
-Decision
-
-Each Lexical Environment owns exactly one Environment Record.
-
-The Environment Record is responsible for storing all runtime bindings belonging to that lexical scope.
-
-Rationale
-Keeps runtime data separate from static analysis.
-Mirrors the ECMAScript execution model.
-Every lexical scope has its own runtime storage.
-Enables independent runtime state for nested scopes.
-Consequences
-Runtime bindings are stored only inside Environment Records.
-The Scope Tree remains immutable after static analysis.
-Nested scopes will naturally receive their own Environment Records.
-Variable lookup will later operate through Environment Records instead of the Scope Tree.
-
-## Decision 012 — Identifier Resolution Strategy
-Problem
-
-During execution, the engine must resolve an identifier (for example, a) to its corresponding runtime binding. The Scope Tree contains declaration information but does not represent the current runtime state of variables.
-
-Decision
-
-Identifier resolution will always operate on the Lexical Environment chain by searching Environment Records. The Scope Tree will never be consulted during runtime variable lookup.
-
-Rationale
-The Scope Tree is a static blueprint generated during analysis.
-Runtime values exist only inside Environment Records.
-Walking the Lexical Environment chain (outer) accurately models JavaScript lexical scoping.
-This design aligns with the ECMAScript specification and cleanly separates static analysis from execution.
-Consequences
-Every variable read or write begins by resolving a binding through the current Lexical Environment.
-Nested scope lookup is implemented by traversing the outer chain.
-Runtime execution remains independent of the parser and scope builder.
-Features such as closures, block scope, shadowing, and TDZ naturally build on the same identifier resolution algorithm.
-
-## Decision 013 — Binding Access Responsibility
-Problem
-
-Multiple execution algorithms (identifier evaluation, expressions, function calls, assignments) need to read the value of a runtime binding. Performing TDZ validation everywhere would duplicate logic and increase maintenance complexity.
-
-Decision
-
-Reading a binding's value will always be performed through a dedicated runtime algorithm. This algorithm is responsible for enforcing TDZ and returning the stored value.
-
-Rationale
-Centralizes TDZ enforcement.
-Eliminates duplicated runtime checks.
-Keeps identifier resolution and value access separate.
-Mirrors the layered architecture used throughout the project.
-Consequences
-resolveIdentifier() only locates bindings.
-getBindingValue() becomes the single entry point for reading runtime values.
-Future expression evaluators simply call these runtime APIs.
-
-## Decision 014 — Executor Responsibility
-Problem
-
-The runtime has algorithms for resolving identifiers and managing bindings, but there is no component responsible for traversing the AST and executing nodes in source order.
-
-Decision
-
-Introduce a dedicated Executor responsible solely for traversing the AST and delegating runtime operations to specialized algorithms.
-
-Rationale
-Separates traversal from runtime logic.
-Keeps runtime algorithms focused on a single responsibility.
-Makes adding new AST node types incremental.
-Closely follows the architecture of modern JavaScript engines.
-Consequences
-The executor never manipulates Environment Records directly.
-All variable access goes through runtime APIs.
-New syntax is supported by adding node executors rather than changing the runtime.
-
-## Decision 015 — Memory Creation vs Execution
-Problem
-
-Variable declarations appear in both the Memory Creation phase and the Execution phase. The runtime must clearly distinguish between allocating a binding and initializing it.
-
-Decision
-
-Memory Creation is responsible only for allocating bindings. Execution is responsible for evaluating initializer expressions and updating those existing bindings.
-
-Rationale
-Matches the ECMAScript execution model.
-Prevents duplicate binding creation.
-Clearly separates allocation from initialization.
-Enables TDZ to exist naturally between these two phases.
-Consequences
-Memory Creation never evaluates expressions.
-Execution never creates bindings.
-Variable declarations become binding updates during execution.
-
-## Decision 016 — Project Boundary
-
-Status
-
-LOCKED
-
-Decision
-
-The execution engine will implement only the JavaScript runtime semantics required for visualization.
-
-The project is not intended to become a complete ECMAScript implementation or a production JavaScript engine.
-
-Rationale
-
-The project's objective is educational visualization rather than language completeness.
-
-Consequences
-
-- Features are added only if they improve visualization.
-- Unsupported ECMAScript features remain outside the project scope until explicitly planned.
-- Architectural simplicity is preferred over exhaustive language support.
+## Decision 015 — Strict Panel Drag Constraints & Guard Overlays
+- **Status**: LOCKED
+- **Decision**: All application panels enforce strict `minSize` percentage limits in `react-resizable-panels` (`Editor 28%`, `Stage/Stack 32%`, `Heap/Queues 24%`) combined with `PanelWidthGuard` dual `ResizeObserver` overlays using `whitespace-nowrap` text protection.
+- **Reason**: Prevents windows from breaking or shrinking into paper-thin columns.

@@ -1,91 +1,60 @@
-import { resolveIdentifier } from "../resolveIdentifier.js";
-import { setBindingValue } from "../setBindingValues.js";
+import { resolveIdentifier } from "../environment/resolveIdentifier.js";
+import { setBindingValue } from "../environment/setBindingValues.js";
 import { evaluateExpression } from "../../execution/expressions/evaluateExpression.js";
 import { bindDestructuring } from "./bindDestructuring.js";
 
 export function bindParameters(
   functionObject,
   args,
-  lexicalEnvironment,
+  environmentRecord,
   executionContextStack,
-  heap,
+  heap
 ) {
-  const params = functionObject.params;
+  const parameters = functionObject.node.params || [];
 
-  for (let i = 0; i < params.length; i++) {
-    const parameter = params[i];
+  parameters.forEach((param, index) => {
+    const passedArg = args[index];
 
-    if (parameter.type === "AssignmentPattern") {
-      const value = args[i] === undefined
-        ? evaluateExpression(parameter.right, executionContextStack, heap)
-        : args[i];
-
-      // The left side of AssignmentPattern can be a destructuring pattern
-      if (
-        parameter.left.type === "ObjectPattern" ||
-        parameter.left.type === "ArrayPattern"
-      ) {
-        bindDestructuring(
-          parameter.left,
-          value,
-          lexicalEnvironment,
-          executionContextStack,
-          heap,
-        );
-
-        continue;
+    if (param.type === "Identifier") {
+      const binding = environmentRecord.bindings.get(param.name);
+      if (binding) {
+        if (passedArg !== undefined) {
+          binding.value = passedArg;
+          binding.initialized = true;
+        } else {
+          binding.value = undefined;
+          binding.initialized = true;
+        }
       }
+    } else if (param.type === "AssignmentPattern") {
+      const paramName = param.left.name;
+      const binding = environmentRecord.bindings.get(paramName);
 
-      const binding = resolveIdentifier(parameter.left.name, lexicalEnvironment);
-      setBindingValue(binding, value);
-      continue;
-    }
-
-    if (parameter.type === "RestElement") {
-      const restArgs = args.slice(i);
-
-      if (
-        parameter.argument.type === "ObjectPattern" ||
-        parameter.argument.type === "ArrayPattern"
-      ) {
-        bindDestructuring(
-          parameter.argument,
-          restArgs,
-          lexicalEnvironment,
-          executionContextStack,
-          heap,
-        );
-
-        continue;
+      if (binding) {
+        if (passedArg !== undefined) {
+          binding.value = passedArg;
+          binding.initialized = true;
+        } else {
+          const defaultValue = evaluateExpression(
+            param.right,
+            executionContextStack,
+            heap
+          );
+          binding.value = defaultValue;
+          binding.initialized = true;
+        }
       }
-
-      const binding = resolveIdentifier(parameter.argument.name, lexicalEnvironment);
-      setBindingValue(binding, restArgs);
-      continue;
-    }
-
-    // Destructuring patterns as direct parameters: function foo({ a, b }) {}
-    if (
-      parameter.type === "ObjectPattern" ||
-      parameter.type === "ArrayPattern"
+    } else if (
+      param.type === "ObjectPattern" ||
+      param.type === "ArrayPattern"
     ) {
       bindDestructuring(
-        parameter,
-        args[i],
-        lexicalEnvironment,
+        param,
+        passedArg,
+        environmentRecord,
         executionContextStack,
-        heap,
+        heap
       );
-
-      continue;
     }
-
-    if (parameter.type !== "Identifier") {
-      continue;
-    }
-
-    const binding = resolveIdentifier(parameter.name, lexicalEnvironment);
-    setBindingValue(binding, args[i]);
-  }
+  });
 }
-

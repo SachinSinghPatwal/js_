@@ -1,4 +1,4 @@
-import { FunctionObject } from "../../memory/FunctionObject.js";
+import { FunctionObject } from "../../runtime/FunctionObject.js";
 
 export function evaluateArrowFunctionExpression(
   node,

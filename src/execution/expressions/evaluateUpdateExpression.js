@@ -1,4 +1,4 @@
-import { resolveIdentifier } from "../../runtime/resolveIdentifier.js";
+import { resolveIdentifier } from "../../runtime/environment/resolveIdentifier.js";
 
 export function evaluateUpdateExpression(node, executionContextStack) {
   if (node.argument.type !== "Identifier") {

@@ -1,5 +1,5 @@
-import { evaluateExpression } from "./expressions/evaluateExpression.js";
-import { executeNode } from "./executeNode.js";
+import { evaluateExpression } from "../expressions/evaluateExpression.js";
+import { executeNode } from "../executeNode.js";
 
 export function executeWhileStatement(node, executionContextStack, heap) {
   while (evaluateExpression(node.test, executionContextStack, heap)) {

@@ -1,7 +1,11 @@
-import { executeNode } from "./executeNode.js";
+import { executeNode } from "../executeNode.js";
 
-export function executeProgram(program, executionContextStack, heap) {
-  for (const statement of program.body) {
+export function executeBlockStatement(
+  blockStatement,
+  executionContextStack,
+  heap,
+) {
+  for (const statement of blockStatement.body) {
     executeNode(statement, executionContextStack, heap);
 
     const executionContext = executionContextStack.current();

@@ -1,4 +1,4 @@
-import { executeNode } from "./executeNode.js";
+import { executeNode } from "../executeNode.js";
 
 export function evaluateExportNamedDeclaration(node, executionContextStack, heap) {
   // If the export has a declaration (e.g. `export const foo = 1;`), evaluate it locally.

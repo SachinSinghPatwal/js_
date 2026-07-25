@@ -1,5 +1,5 @@
-import { executeNode } from "./executeNode.js";
-import { createEnvironmentRecord } from "../runtime/createEnvironmentRecord.js";
+import { executeNode } from "../executeNode.js";
+import { createEnvironmentRecord } from "../../runtime/environment/createEnvironmentRecord.js";
 
 export function executeTryStatement(node, executionContextStack, heap) {
   const executionContext = executionContextStack.current();

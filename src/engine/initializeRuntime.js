@@ -1,10 +1,11 @@
-import { createExecutionContext, resetEcIdCounter } from "../runtime/createExecutionContext.js";
-import { populateBindings } from "../memory/createRuntimeBindings.js";
+import { createExecutionContext } from "../runtime/context/createExecutionContext.js";
+import { resetEcIdCounter } from "../runtime/context/createExecutionContext.js";
+import { populateBindings } from "../runtime/createRuntimeBindings.js";
 import ExecutionContextStack from "../runtime/callStack/ExecutionContextStack.js";
 import Heap from "../runtime/heap/heap.js";
 import { allocateObject } from "../runtime/heap/allocateObject.js";
-import { createBinding } from "../runtime/createBinding.js";
-import { setBindingValue } from "../runtime/setBindingValues.js";
+import { createBinding } from "../runtime/environment/createBinding.js";
+import { setBindingValue } from "../runtime/environment/setBindingValues.js";
 
 import { createConsole } from "./builtins/createConsole.js";
 import { createSetTimeout } from "./builtins/createSetTimeout.js";

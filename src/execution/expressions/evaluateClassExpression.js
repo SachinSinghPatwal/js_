@@ -1,4 +1,4 @@
-import { FunctionObject } from "../../memory/FunctionObject.js";
+import { FunctionObject } from "../../runtime/FunctionObject.js";
 import { evaluateExpression } from "./evaluateExpression.js";
 import { callFunction } from "../../runtime/function/callFunction.js";
 

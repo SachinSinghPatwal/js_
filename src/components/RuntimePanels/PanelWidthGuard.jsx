@@ -1,37 +1,46 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function PanelWidthGuard({ minWidth = 240, label = "Panel", children }) {
+export default function PanelWidthGuard({
+  minWidth = 260,
+  minHeight = 140,
+  label = "Panel",
+  children,
+}) {
   const containerRef = useRef(null);
-  const [isTooNarrow, setIsTooNarrow] = useState(false);
+  const [isTooSmall, setIsTooSmall] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        if (entry.contentRect.width > 0 && entry.contentRect.width < minWidth) {
-          setIsTooNarrow(true);
+        const { width, height } = entry.contentRect;
+        if (
+          (width > 0 && width < minWidth) ||
+          (height > 0 && height < minHeight)
+        ) {
+          setIsTooSmall(true);
         } else {
-          setIsTooNarrow(false);
+          setIsTooSmall(false);
         }
       }
     });
 
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, [minWidth]);
+  }, [minWidth, minHeight]);
 
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-hidden">
       {children}
-      {isTooNarrow && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#181818]/90 backdrop-blur-xs p-3">
-          <div className="bg-[#252526] border border-[#3c3e41] rounded-lg shadow-xl px-4 py-3 text-center max-w-[90%] font-mono flex flex-col items-center gap-1">
-            <span className="text-[11px] font-semibold text-[#e2b714]">
-              {label} Too Narrow
+      {isTooSmall && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#181818]/95 backdrop-blur-xs p-2 overflow-hidden">
+          <div className="bg-[#252526] border border-[#3c3e41] rounded-lg shadow-2xl px-3 py-2.5 text-center max-w-[95%] w-fit font-mono flex flex-col items-center justify-center gap-1 shrink-0 overflow-hidden">
+            <span className="text-[10px] font-semibold text-[#e2b714] whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+              {label} Too Small
             </span>
-            <span className="text-[9px] text-[#858585]">
-              Drag border to expand window
+            <span className="text-[9px] text-[#858585] whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+              Drag border to expand
             </span>
           </div>
         </div>

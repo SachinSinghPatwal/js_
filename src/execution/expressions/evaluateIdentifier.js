@@ -1,5 +1,5 @@
-import { resolveIdentifier } from "../../runtime/resolveIdentifier.js"; 
-import { getBindingValue } from "../../runtime/getBindingValues.js";
+import { resolveIdentifier } from "../../runtime/environment/resolveIdentifier.js"; 
+import { getBindingValue } from "../../runtime/environment/getBindingValues.js";
 
 export function evaluateIdentifier(node, executionContextStack) {
   if (node.name === "this") {

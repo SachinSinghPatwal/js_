@@ -48,7 +48,6 @@ export default function ExecutionStagePanel() {
             concept: "Lexical Binding & Memory Allocation",
             description: `V8 binds identifier '${idName}' in the active Execution Context's Lexical Environment.`,
             location: `Call Stack (Frame: ${topFrame?.scope?.name || "Global"})`,
-            bindings: activeBindings.map(([k, v]) => ({ name: k, value: v?.value, initialized: v?.initialized })),
           },
         };
       }
@@ -63,7 +62,6 @@ export default function ExecutionStagePanel() {
             concept: "First-Class Function Instantiation",
             description: `V8 creates a Function object stored in Heap memory with [[Environment]] closure reference.`,
             location: "Memory Heap (Address 0x000X)",
-            functionName: fnName,
           },
         };
       }
@@ -137,7 +135,18 @@ export default function ExecutionStagePanel() {
 
   const info = getConciseStepInfo();
 
-  const handleKnowMore = () => {
+  const handleKnowMore = (e) => {
+    e.stopPropagation();
+
+    // Safely format bindings without circular object references
+    const safeBindings = activeBindings.map(([k, v]) => ({
+      name: String(k),
+      initialized: Boolean(v?.initialized),
+      value: typeof v?.value === "object" && v?.value !== null 
+        ? `[${v.value.type || "Object"}]` 
+        : String(v?.value),
+    }));
+
     VisualizationStore.setModalData({
       type: "V8 Internal Property Inspector",
       title: info.summary,
@@ -145,14 +154,10 @@ export default function ExecutionStagePanel() {
         concept: info.details.concept,
         description: info.details.description,
         currentLocation: info.position,
-        activeNode: currentNode?.type,
-        line: currentNode?.loc?.start?.line,
-        activeBindings: activeBindings.map(([k, v]) => ({
-          name: k,
-          value: v?.value,
-          initialized: v?.initialized,
-        })),
-        stackFrames: callStack.length,
+        activeNodeType: currentNode?.type || "Statement",
+        line: currentNode?.loc?.start?.line || 1,
+        activeBindings: safeBindings,
+        stackDepth: callStack.length,
         microtaskCount: microtasks.length,
         macrotaskCount: macrotasks.length,
       },
@@ -234,9 +239,9 @@ export default function ExecutionStagePanel() {
           {/* Centered Know More Button */}
           <button
             onClick={handleKnowMore}
-            className="mt-1 px-3.5 py-1.5 rounded-lg bg-[#252526] border border-[#3c3e41] text-[#e2b714] hover:bg-[#333333] hover:border-[#e2b714] transition-all text-[10px] font-bold shadow-md flex items-center gap-1.5 cursor-pointer"
+            className="mt-1 px-3.5 py-1.5 rounded-lg bg-[#252526] border border-[#3c3e41] text-[#e2b714] hover:bg-[#333333] hover:border-[#e2b714] transition-all text-[10px] font-bold shadow-md flex items-center gap-1 cursor-pointer"
           >
-            ℹ Know More
+            Know More
           </button>
         </div>
       )}

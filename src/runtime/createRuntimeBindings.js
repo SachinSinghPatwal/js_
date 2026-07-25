@@ -1,6 +1,5 @@
-import { createBinding } from "../runtime/createBinding.js";
+import { createBinding } from "./environment/createBinding.js";
 import { FunctionObject } from "./FunctionObject.js";
-// import { UNINITIALIZED } from "../runtime/constant.js";
 
 export function populateBindings(scope, environmentRecord, lexicalEnvironment = null) {
   for (const [name, variable] of scope.variables) {

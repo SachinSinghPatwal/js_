@@ -1,4 +1,4 @@
-import { createFunctionExecutionContext } from "./createFunctionExecutionContext.js";
+import { createFunctionExecutionContext } from "../context/createFunctionExecutionContext.js";
 import { bindParameters } from "./bindParameters.js";
 import { executeNode } from "../../execution/executeNode.js";
 
@@ -7,70 +7,39 @@ export function callFunction(
   args,
   executionContextStack,
   heap,
-  thisValue = undefined,
-  newTarget = undefined,
+  thisValue = null
 ) {
-  if (!functionObject || typeof functionObject !== "object") {
-    console.error("[callFunction debug] fn:", functionObject, "args:", args);
-    throw new TypeError("Attempted to call a non-function value.");
-  }
-
   if (functionObject.isNative) {
-    return functionObject.nativeCall(args, executionContextStack, heap, thisValue, newTarget);
+    return functionObject.nativeCall(args, executionContextStack, heap);
   }
-
-  const currentExecutionContext = executionContextStack.current();
 
   const functionExecutionContext = createFunctionExecutionContext(
     functionObject,
-    functionObject.capturedEnvironment ?? currentExecutionContext.lexicalEnvironment,
-    args,
-    newTarget,
+    thisValue
   );
-
-  // Set the this binding on the execution context
-  if (functionObject.isArrow) {
-    functionExecutionContext.thisBinding = functionObject.capturedThisValue;
-  } else {
-    functionExecutionContext.thisBinding = thisValue;
-  }
-
-  // Propagate class-related metadata for super() and super.method()
-  if (functionObject.superClass) {
-    functionExecutionContext.superClass = functionObject.superClass;
-  }
-
-  if (functionObject.homeObject) {
-    functionExecutionContext.homeObject = functionObject.homeObject;
-  }
-
-  executionContextStack.push(functionExecutionContext);
 
   bindParameters(
     functionObject,
     args,
-    functionExecutionContext.lexicalEnvironment,
+    functionExecutionContext.lexicalEnvironment.environmentRecord,
     executionContextStack,
-    heap,
+    heap
   );
 
-  executeNode(functionObject.body, executionContextStack, heap);
+  executionContextStack.push(functionExecutionContext);
 
-  const returnValue = functionExecutionContext.returnValue;
-
-  // Detect closure: if the return value is a function that captured this environment
-  if (returnValue && typeof returnValue === 'object' && returnValue.type === 'FunctionObject') {
-    // Emit closure event for visualization
-    if (heap.runtime?.onClosureCreated) {
-      heap.runtime.onClosureCreated({
-        poppedContext: functionExecutionContext,
-        returnedFunction: returnValue,
-        capturedEnvironment: returnValue.capturedEnvironment || returnValue.scope,
-      });
+  let result;
+  try {
+    result = executeNode(
+      functionObject.node.body,
+      executionContextStack,
+      heap
+    );
+  } finally {
+    if (executionContextStack.peek() === functionExecutionContext) {
+      executionContextStack.pop();
     }
   }
 
-  executionContextStack.pop();
-
-  return returnValue;
+  return result;
 }

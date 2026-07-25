@@ -1,127 +1,83 @@
-# JavaScript Execution Visualizer Architecture
+# Modular Architecture & Folder Responsibilities
 
-## Goal
-
-# JavaScript Execution Visualizer
-
-An educational JavaScript execution engine that visualizes how JavaScript executes code.
-
-The project models runtime concepts such as:
-
-- Scope Tree
-- Execution Contexts
-- Lexical Environments
-- Environment Records
-- Hoisting
-- TDZ
-- Function Calls
-- Closures
-- Event Loop
-
-The goal is educational correctness rather than implementing the entire ECMAScript specification.
+The codebase separates the **Visualizer UI Layer** from the **Interpreter / Engine Runtime Layer** into clear, dedicated modules.
 
 ---
 
-# High-Level Pipeline
+## 🏛️ High-Level Layer Architecture
 
-Source Code
-    ↓
-Formatter (Optional)
-    ↓
-Parser
-    ↓
-AST
-    ↓
-Scope Builder
-    ↓
-Execution Context Creation
-    ↓
-Memory Creation
-    ↓
-Execution
-    ↓
-Event Loop Simulation
-
----
-
-# Major Components
-
-## Editor
-
-Responsibilities
-
-- Accept user code
-- Format code
-- Highlight syntax
+```text
+Visualizer UI Layer                     Interpreter / Engine Layer
+┌───────────────────────────────┐       ┌───────────────────────────────┐
+│ src/components/               │       │ src/engine/                   │
+│   ├── Editor/                 │       │   ├── parser/                 │
+│   ├── RuntimePanels/          │       │   ├── scope/                  │
+│   └── Timeline/               │       │   ├── formatter/              │
+├───────────────────────────────┤       │   ├── builtins/               │
+│ src/visualization/            │       │   └── initializeRuntime.js    │
+│   ├── snapshot/               │       ├───────────────────────────────┤
+│   └── store/                  │       │ src/execution/                │
+└───────────────────────────────┘       │   ├── execute.js              │
+                                        │   ├── executeNode.js          │
+                                        │   ├── statements/             │
+                                        │   ├── modules/                │
+                                        │   └── expressions/            │
+                                        ├───────────────────────────────┤
+                                        │ src/runtime/                  │
+                                        │   ├── environment/            │
+                                        │   ├── context/                │
+                                        │   ├── function/               │
+                                        │   └── heap/                   │
+                                        └───────────────────────────────┘
+```
 
 ---
 
-## Parser
+## 📂 Folder Responsibilities
 
-Responsibilities
+### 1. `src/components/` (Visualizer UI Components)
+- **`Editor/`**: Monaco Editor setup, syntax highlighting, active line decorator (`decorator.js`), and custom VS Code dark theme (`Theme/dark26.json`).
+- **`RuntimePanels/`**: Specialized inspection panels:
+  - `CallStackPanel.jsx`: Execution context cards, scope chain, `this` binding.
+  - `EventLoopPanel.jsx`: Step-by-step event loop phase pipeline.
+  - `ExecutionStagePanel.jsx`: Centered flow badge, single-line action summary, and `Know More` inspector button.
+  - `HeapPanel.jsx`: Categorized typed memory heap view (Objects, Functions, Promises, Arrays, Closures).
+  - `MicroQueuePanel.jsx` & `MacroQueuePanel.jsx`: Queued `PromiseReactionJob` and `TimerTask` viewers.
+  - `WebAPIPanel.jsx`: Host environment (Web APIs) viewer.
+  - `ConsolePanel.jsx`: Simulated stdout/stderr terminal with line numbers (`Line 5`).
+  - `EntityDetailsModal.jsx`: Tree inspector modal with circular reference protection and `Esc` key dismiss.
+  - `PanelWidthGuard.jsx`: Responsive dual width/height observer guard overlay preventing window breakage.
+- **`Timeline/`**: Floating playback controls (`TimelineControls.jsx`).
 
-- Convert source code into an AST.
-- Report syntax errors.
-
-Does NOT
-
-- Execute code
-- Resolve identifiers
-
----
-
-## Scope Builder
-
-Responsibilities
-
-- Create lexical scopes.
-- Register declarations.
-- Build the scope hierarchy.
-
-Does NOT
-
-- Execute expressions
-- Resolve identifier references
-- Create runtime memory
+### 2. `src/visualization/` (Snapshot & Visualizer State Management)
+- **`snapshot/SnapshotGenerator.js`**: Pre-computes state snapshots for every step of execution.
+- **`store/VisualizationStore.js`**: Central subscription store for timeline playback, step navigation, and modal state.
 
 ---
 
-## Execution Context Builder
-
-Responsibilities
-
-- Create runtime execution contexts.
-- Build lexical environments.
-
----
-
-## Memory Creation
-
-Responsibilities
-
-- Create bindings.
-- Apply hoisting rules.
-- Initialize function bindings.
-- Leave let/const in TDZ.
+### 3. `src/engine/` (Interpreter Subsystems & Runtime Setup)
+- **`initializeRuntime.js`**: Bootstraps the engine runtime, allocates `GlobalObject` at `0x0000`, instantiates Global Execution Context, and binds builtin objects.
+- **`builtins/`**: Native builtins (`createConsole.js`, `createPromise.js`, `createSetTimeout.js`).
+- **`parser/parseCode.js`**: Acorn ESTree parser converting source code string into AST.
+- **`scope/`**: Static scope blueprint builder (`scopeBuilder.js`, `scope.js`, `registerDeclaration.js`).
+- **`formatter/formatCode.js`**: Prettier standalone code formatting service.
+- **`traverser/traverseAST.js`**: AST walk helper.
 
 ---
 
-## Execution Engine
-
-Responsibilities
-
-- Execute statements.
-- Evaluate expressions.
-- Resolve identifiers.
-- Update runtime memory.
+### 4. `src/execution/` (AST Execution & Statement Dispatching)
+- **`execute.js`**: Master runtime event loop driver and snapshot step generator.
+- **`executeNode.js`**: Master statement AST dispatcher.
+- **`statements/`**: Isolated AST statement handlers (`executeBlockStatement.js`, `executeIfStatement.js`, `executeVariableDeclaration.js`, `executeFunctionDeclaration.js`, `executeTryStatement.js`, etc.).
+- **`modules/`**: ES Module declaration handlers (`evaluateImportDeclaration.js`, `evaluateExportNamedDeclaration.js`, etc.).
+- **`expressions/`**: Expression evaluation handlers (`evaluateCallExpression.js`, `evaluateIdentifier.js`, `evaluateBinaryExpression.js`, etc.) and `operators/` (`binaryOperators.js`, `unaryOperators.js`).
 
 ---
 
-## Event Loop
-
-Responsibilities
-
-- Simulate Call Stack
-- Microtask Queue
-- Macrotask Queue
-- Timers
+### 5. `src/runtime/` (V8 Memory, Environment & Context Layer)
+- **`createRuntimeBindings.js`**: Populates variable declarations into Environment Records.
+- **`FunctionObject.js`**: First-class function object with captured `[[Environment]]` scope pointer.
+- **`environment/`**: Lexical environment & environment record management (`createBinding.js`, `createEnvironmentRecord.js`, `createLexicalEnvironment.js`, `getBindingValues.js`, `setBindingValues.js`, `resolveIdentifier.js`, `constant.js`).
+- **`context/`**: Execution Context factories (`createExecutionContext.js`, `createFunctionExecutionContext.js`).
+- **`function/`**: Function invocation, parameter binding, and destructuring (`callFunction.js`, `bindParameters.js`, `bindDestructuring.js`).
+- **`heap/`**: Typed Memory Heap allocation (`allocateObject.js`, `allocateArray.js`, `getHeapValue.js`) and Mark-and-Sweep Garbage Collection simulation (`heap.js`).

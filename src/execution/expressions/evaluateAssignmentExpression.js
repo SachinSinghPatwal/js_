@@ -1,9 +1,9 @@
 import { evaluateExpression } from "./evaluateExpression.js";
-import { resolveIdentifier } from "../../runtime/resolveIdentifier.js";
-import { setBindingValue } from "../../runtime/setBindingValues.js";
+import { resolveIdentifier } from "../../runtime/environment/resolveIdentifier.js";
+import { setBindingValue } from "../../runtime/environment/setBindingValues.js";
 import { evaluateMemberAssignmentExpression } from "./evaluateMemberAssignmentExpression.js";
 import { bindDestructuring } from "../../runtime/function/bindDestructuring.js";
-import { getBindingValue } from "../../runtime/getBindingValues.js";
+import { getBindingValue } from "../../runtime/environment/getBindingValues.js";
 
 export function evaluateAssignmentExpression(
   node,
