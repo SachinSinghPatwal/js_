@@ -104,10 +104,10 @@
     }
   ],
   "colors": {
-    "editor.background": "#121314",
-    "editor.foreground": "#BBBEBF",
-    "editorLineNumber.foreground": "#6B6B6B",
-    "editorLineNumber.activeForeground": "#BBBBBB",
+    "editor.background": "#1e1e1e",
+    "editor.foreground": "#D4D4D4",
+    "editorLineNumber.foreground": "#5A5A5A",
+    "editorLineNumber.activeForeground": "#C6C6C6",
     "editorCursor.foreground": "#AEAFAD",
     "editor.selectionBackground": "#264F78",
     "editor.inactiveSelectionBackground": "#3A3D41",
@@ -120,6 +120,9 @@
     "editorIndentGuide.activeBackground": "#707070",
     "editorWhitespace.foreground": "#3B3B3B",
     "editorBracketMatch.background": "#0064001A",
-    "editorBracketMatch.border": "#888888"
+    "editorBracketMatch.border": "#888888",
+    "scrollbarSlider.background": "#42424260",
+    "scrollbarSlider.hoverBackground": "#4f4f4f80",
+    "scrollbarSlider.activeBackground": "#6e6e6e90"
   }
 }

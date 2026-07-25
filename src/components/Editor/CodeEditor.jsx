@@ -11,7 +11,7 @@ import { createSnapshot } from "../../visualization/snapshot/SnapshotGenerator.j
 import { createDecorations } from "./decorator.js";
 
 const baseTheme = {
-  fontSize: 14,
+  fontSize: 13,
   fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
   fontLigatures: true,
 
@@ -20,11 +20,8 @@ const baseTheme = {
   },
 
   smoothScrolling: true,
-
   scrollBeyondLastLine: false,
-
   automaticLayout: true,
-
   wordWrap: "on",
 
   tabSize: 2,
@@ -45,20 +42,23 @@ const baseTheme = {
   },
 
   lineNumbers: "on",
-
   glyphMargin: false,
   folding: true,
-
   contextmenu: true,
 
   padding: {
-    top: 12,
-    bottom: 12,
+    top: 10,
+    bottom: 10,
   },
 
   scrollbar: {
+    vertical: "visible",
+    horizontal: "auto",
+    useShadows: false,
     verticalScrollbarSize: 10,
     horizontalScrollbarSize: 10,
+    verticalHasArrows: false,
+    horizontalHasArrows: false,
   },
 
   suggest: {
@@ -66,7 +66,6 @@ const baseTheme = {
   },
 
   quickSuggestions: true,
-
   formatOnPaste: true,
   formatOnType: true,
 };
@@ -158,7 +157,6 @@ const CodeEditor = () => {
 
       execute(parsedToAST, runtime);
 
-      // Capture the final state after execution is complete
       VisualizationStore.addSnapshot(
         createSnapshot(stepCount++, null, runtime),
       );
@@ -182,9 +180,10 @@ const CodeEditor = () => {
   }
 
   return (
-    <div className="h-full w-full overflow-hidden relative">
+    <div className="h-full w-full relative">
       <Editor
         height="100%"
+        width="100%"
         defaultLanguage="javascript"
         defaultValue={defaultCodeSnippet}
         theme="Dark26"

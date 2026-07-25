@@ -2,42 +2,49 @@ import { allocateObject } from "../../runtime/heap/allocateObject.js";
 import { createBinding } from "../../runtime/createBinding.js";
 import { setBindingValue } from "../../runtime/setBindingValues.js";
 
+function createConsoleMethod(methodName, type, runtime) {
+  return {
+    isNative: true,
+    name: methodName,
+    nativeCall(args, executionContextStack, currentHeap) {
+      const resolvedArgs = args.map((arg) => {
+        if (typeof arg === "number") {
+          return currentHeap.get(arg);
+        }
+        return arg;
+      });
+
+      const line = runtime.currentNode?.loc?.start?.line || 1;
+
+      console.log(`🖥️ [Simulated Console ${methodName} (line ${line})]:`, ...resolvedArgs);
+
+      runtime.consoleLogs.push({
+        type,
+        line,
+        args: resolvedArgs,
+      });
+
+      const logId = Date.now() + Math.random();
+      runtime.webAPIs.set(logId, { type: `console.${methodName}` });
+
+      if (runtime.onStep) {
+        runtime.onStep(null, runtime);
+      }
+
+      runtime.webAPIs.delete(logId);
+
+      return undefined;
+    },
+  };
+}
+
 export function createConsole(globalExecutionContext, runtime) {
   const { heap } = runtime;
   const consoleObject = {
-    log: {
-      isNative: true,
-      name: "log",
-      nativeCall(args, executionContextStack, currentHeap) {
-        // Resolve arguments by fetching from heap if they are addresses
-        const resolvedArgs = args.map((arg) => {
-          if (typeof arg === "number") {
-            return currentHeap.get(arg);
-          }
-          return arg;
-        });
-
-        // Still log to actual console for debugging
-        console.log("🖥️ [Simulated Console]:", ...resolvedArgs);
-        
-        // Push to the simulated console queue
-        runtime.consoleLogs.push({
-          type: 'log',
-          args: resolvedArgs
-        });
-        
-        const logId = Date.now() + Math.random();
-        runtime.webAPIs.set(logId, { type: 'console.log' });
-        
-        if (runtime.onStep) {
-          runtime.onStep(null, runtime);
-        }
-        
-        runtime.webAPIs.delete(logId);
-        
-        return undefined;
-      },
-    },
+    log: createConsoleMethod("log", "log", runtime),
+    error: createConsoleMethod("error", "error", runtime),
+    warn: createConsoleMethod("warn", "warn", runtime),
+    info: createConsoleMethod("info", "info", runtime),
   };
 
   const consoleAddress = allocateObject(heap, consoleObject);

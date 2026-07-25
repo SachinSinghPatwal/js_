@@ -1,25 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { VisualizationStore } from "../../visualization/store/VisualizationStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe, Server, Clock, Monitor, Wifi, Eye, HardDrive, Network } from "lucide-react";
-
-const BROWSER_API_ICONS = {
-  Timer: Clock,
-  DOM: Monitor,
-  Fetch: Wifi,
-  MutationObserver: Eye,
-  setTimeout: Clock,
-  Timeout: Clock,
-};
-
-const NODE_API_ICONS = {
-  Timer: Clock,
-  libuv: Network,
-  FS: HardDrive,
-  DNS: Globe,
-  TCP: Network,
-  nextTick: Clock,
-};
 
 export default function WebAPIPanel() {
   const { currentSnapshot } = useSyncExternalStore(
@@ -34,84 +15,65 @@ export default function WebAPIPanel() {
   const hostEnv = currentSnapshot?.runtime?.hostEnvironment || "browser";
   const isBrowser = hostEnv === "browser";
 
-  const envLabel = isBrowser ? "Browser Host" : "Node.js Runtime";
-  const EnvIcon = isBrowser ? Globe : Server;
-  const apiIcons = isBrowser ? BROWSER_API_ICONS : NODE_API_ICONS;
-
-  // Available APIs for the current environment
   const availableAPIs = isBrowser
     ? ["Timer", "DOM", "Fetch", "MutationObserver"]
-    : ["Timers", "libuv", "FS", "DNS", "TCP", "process.nextTick"];
+    : ["Timers", "libuv", "FS", "DNS", "TCP", "nextTick"];
 
   return (
-    <div className="h-full w-full flex flex-col bg-[#0d0d0d]">
-      {/* Header with host environment badge */}
-      <div className="px-3 py-1.5 border-b border-[#222] bg-[#141414] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500/60" />
-          <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider">
-            Host APIs
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <EnvIcon size={10} className="text-emerald-500/70" />
-          <span className="text-[9px] font-mono bg-emerald-900/30 text-emerald-400 px-1.5 py-0.5 rounded">
-            {envLabel}
-          </span>
-        </div>
+    <div className="h-full w-full flex flex-col bg-[#1e1e1e]">
+      <div className="px-3 py-1.5 border-b border-[#252526] bg-[#252526] flex items-center justify-between">
+        <span className="text-[11px] font-mono text-[#d4d4d4] uppercase tracking-wider font-semibold">
+          Host APIs
+        </span>
+        <span className="text-[9px] font-mono bg-[#1e1e1e] border border-[#2d2d2d] text-[#e2b714] px-1.5 py-0.5 rounded font-bold">
+          {isBrowser ? "Browser Host" : "Node.js Runtime"}
+        </span>
       </div>
 
-      <div className="flex-1 p-2 overflow-y-auto flex flex-col gap-2">
-        {/* Available API badges — shows what's available in this host environment */}
-        <div className="flex flex-wrap gap-1 px-1">
+      <div className="flex-1 p-2 overflow-y-auto flex flex-col gap-2 custom-scrollbar font-mono">
+        <div className="flex flex-wrap gap-1">
           {availableAPIs.map((api) => (
             <span
               key={api}
-              className="text-[8px] font-mono text-emerald-600 bg-emerald-950/30 border border-emerald-900/30 px-1.5 py-0.5 rounded"
+              className="text-[8px] text-[#858585] bg-[#252526] border border-[#2d2d2d] px-1.5 py-0.5 rounded"
             >
               {api}
             </span>
           ))}
         </div>
 
-        {/* Dashed separator — visual distinction: "not part of V8" */}
-        <div className="border-t border-dashed border-emerald-900/30 mx-1" />
+        <div className="border-t border-dashed border-[#2d2d2d] my-0.5" />
 
-        {/* Active background tasks */}
         <div className="flex flex-col gap-1">
           {webAPIs.length === 0 ? (
-            <div className="flex items-center justify-center py-3">
-              <span className="text-[10px] font-mono text-neutral-600 italic">
+            <div className="flex items-center justify-center py-2">
+              <span className="text-[10px] text-[#858585] italic">
                 No active background tasks
               </span>
             </div>
           ) : (
             <AnimatePresence initial={false}>
               {webAPIs.map(([id, api]) => {
-                const Icon = apiIcons[api.type] || apiIcons[api.label] || Clock;
                 return (
                   <motion.div
                     key={id}
                     layout
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
-                    className="rounded-lg border border-emerald-800/40 bg-emerald-950/20 p-2 flex items-center justify-between gap-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="rounded border border-[#2d2d2d] bg-[#252526] p-1.5 flex items-center justify-between gap-2"
                   >
-                    <div className="flex items-center gap-2">
-                      <Icon size={12} className="text-emerald-500/70" />
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-mono text-emerald-300">
-                          {api.label || api.type}
+                    <div className="flex flex-col">
+                      <span className="text-[10px] text-[#d4d4d4] font-medium">
+                        {api.label || api.type}
+                      </span>
+                      {api.delay !== undefined && (
+                        <span className="text-[8px] text-[#858585]">
+                          {api.delay}ms delay
                         </span>
-                        {api.delay !== undefined && (
-                          <span className="text-[8px] font-mono text-neutral-500">
-                            {api.delay}ms delay
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
-                    <span className="text-[8px] font-mono text-emerald-600 bg-emerald-950/50 px-1.5 py-0.5 rounded">
+                    <span className="text-[8px] text-[#e2b714] bg-[#1e1e1e] border border-[#2d2d2d] px-1 rounded font-bold">
                       Background
                     </span>
                   </motion.div>
@@ -119,13 +81,6 @@ export default function WebAPIPanel() {
               })}
             </AnimatePresence>
           )}
-        </div>
-
-        {/* Footer note: Not part of V8 */}
-        <div className="mt-auto px-1 pb-1">
-          <span className="text-[8px] font-mono text-neutral-600 italic">
-            ⚠ Host APIs are NOT part of the V8 engine
-          </span>
         </div>
       </div>
     </div>

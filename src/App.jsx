@@ -7,6 +7,7 @@ import {
 import CodeEditor from "./components/Editor/CodeEditor";
 import TimelineControls from "./components/Timeline/TimelineControls";
 
+import ExecutionStagePanel from "./components/RuntimePanels/ExecutionStagePanel";
 import CallStackPanel from "./components/RuntimePanels/CallStackPanel";
 import HeapPanel from "./components/RuntimePanels/HeapPanel";
 import EventLoopPanel from "./components/RuntimePanels/EventLoopPanel";
@@ -14,15 +15,16 @@ import MicroQueuePanel from "./components/RuntimePanels/MicroQueuePanel";
 import MacroQueuePanel from "./components/RuntimePanels/MacroQueuePanel";
 import WebAPIPanel from "./components/RuntimePanels/WebAPIPanel";
 import EntityDetailsModal from "./components/RuntimePanels/EntityDetailsModal";
+import PanelWidthGuard from "./components/RuntimePanels/PanelWidthGuard";
 
 import ConsolePanel from "./components/RuntimePanels/ConsolePanel";
 
 function ResizeHandle({ className = "" }) {
   return (
     <PanelResizeHandle
-      className={`w-2 h-full bg-transparent hover:bg-blue-500/50 transition-colors flex items-center justify-center cursor-col-resize ${className}`}
+      className={`w-1.5 h-full bg-transparent hover:bg-[#e2b714]/40 transition-colors flex items-center justify-center cursor-col-resize ${className}`}
     >
-      <div className="w-[1px] h-8 bg-neutral-700 rounded-full" />
+      <div className="w-[1px] h-8 bg-[#2d2d2d] rounded-full" />
     </PanelResizeHandle>
   );
 }
@@ -30,9 +32,9 @@ function ResizeHandle({ className = "" }) {
 function HorizontalResizeHandle({ className = "" }) {
   return (
     <PanelResizeHandle
-      className={`h-2 w-full bg-transparent hover:bg-blue-500/50 transition-colors flex items-center justify-center cursor-row-resize ${className}`}
+      className={`h-1.5 w-full bg-transparent hover:bg-[#e2b714]/40 transition-colors flex items-center justify-center cursor-row-resize ${className}`}
     >
-      <div className="h-[1px] w-8 bg-neutral-700 rounded-full" />
+      <div className="h-[1px] w-8 bg-[#2d2d2d] rounded-full" />
     </PanelResizeHandle>
   );
 }
@@ -62,11 +64,11 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#0a0a0a] text-white overflow-hidden font-sans relative">
-      {/* Entity Details Modal */}
+    <div className="flex flex-col h-screen bg-[#181818] text-[#d4d4d4] overflow-hidden font-sans relative">
+      {/* Entity Details Modal / Inspector */}
       <EntityDetailsModal />
 
-      {/* Invisible Hover Zone at Top Center */}
+      {/* Hover Zone at Top Center */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-12 z-40"
         onMouseMove={handleMouseMove}
@@ -81,7 +83,7 @@ function App() {
 
       {/* Floating Timeline Controls */}
       <div
-        className={`absolute  top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out ${
+        className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out ${
           isControlsVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-4 pointer-events-none"
@@ -97,7 +99,7 @@ function App() {
           );
         }}
       >
-        <div className="rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-[#333] bg-[#0a0a0a]">
+        <div className="rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-[#2d2d2d] bg-[#252526]">
           <TimelineControls panels={panels} togglePanel={togglePanel} />
         </div>
       </div>
@@ -105,80 +107,73 @@ function App() {
       <div className="flex-1 overflow-hidden p-2">
         <PanelGroup
           orientation="horizontal"
-          className="h-full rounded-xl overflow-hidden border border-[#222]"
+          className="h-full rounded-lg overflow-hidden border border-[#252526]"
         >
           {/* Editor & Console Pane */}
           <Panel
             defaultSize={35}
-            minSize={20}
-            className="bg-[#0f0f0f] rounded-l-xl border-r border-[#222]"
+            minSize={15}
+            className="bg-[#1e1e1e] rounded-l-lg border-r border-[#252526]"
           >
-            <PanelGroup orientation="vertical">
-              <Panel defaultSize={panels.console ? 70 : 100} minSize={20}>
-                <div className="flex flex-col h-full">
-                  <div className="px-4 py-2 border-b border-[#222] bg-[#1a1a1a] flex items-center justify-between">
-                    <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider">
+            <PanelWidthGuard minWidth={350} label="Editor & Console">
+              <div className="flex flex-col h-full w-full">
+                {/* Code Editor */}
+                <div
+                  className={`flex flex-col w-full min-h-0 ${
+                    panels.console ? "h-[65%]" : "h-full"
+                  }`}
+                >
+                  <div className="px-4 py-1.5 border-b border-[#252526] bg-[#252526] flex items-center justify-between shrink-0">
+                    <span className="text-[11px] font-mono text-[#858585] uppercase tracking-wider font-semibold">
                       Source.js
                     </span>
                   </div>
-                  <div className="flex-1 relative">
+                  <div className="flex-1 relative min-h-0">
                     <CodeEditor />
                   </div>
                 </div>
-              </Panel>
 
-              {panels.console && (
-                <>
-                  <HorizontalResizeHandle />
-                  <Panel
-                    defaultSize={30}
-                    minSize={15}
-                    className="border-t border-[#222]"
-                  >
+                {/* Console Panel */}
+                {panels.console && (
+                  <div className="h-[35%] overflow-x-hidden w-full min-h-0 border-t border-[#252526]">
                     <ConsolePanel />
-                  </Panel>
-                </>
-              )}
-            </PanelGroup>
+                  </div>
+                )}
+              </div>
+            </PanelWidthGuard>
           </Panel>
 
           <ResizeHandle />
 
-          {/* Execution Stage & Call Stack */}
-          <Panel defaultSize={40} minSize={30} className="bg-[#0f0f0f]">
-            <PanelGroup orientation="vertical">
-              <Panel defaultSize={70} className="flex flex-col">
-                <div className="px-4 py-2 border-b border-[#222] bg-[#1a1a1a] flex items-center justify-between">
-                  <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider">
-                    Execution Stage
-                  </span>
-                </div>
-                <div className="flex-1 flex items-center justify-center text-neutral-600 font-mono text-sm">
-                  Animation Stage (GSAP coming soon)
-                </div>
-              </Panel>
+          {/* Execution Stage & Call Stack / Event Loop */}
+          <Panel defaultSize={40} minSize={20} className="bg-[#1e1e1e]">
+            <PanelWidthGuard minWidth={280} label="Execution Stage">
+              <PanelGroup orientation="vertical">
+                <Panel defaultSize={65} minSize={25} className="flex flex-col">
+                  <ExecutionStagePanel />
+                </Panel>
 
-              {panels.stack && (
-                <>
-                  <HorizontalResizeHandle />
-                  <Panel
-                    defaultSize={30}
-                    minSize={20}
-                    className="border-t border-[#222]"
-                  >
-                    <PanelGroup orientation="horizontal">
-                      <Panel defaultSize={70}>
-                        <CallStackPanel />
-                      </Panel>
-                      <ResizeHandle />
-                      <Panel defaultSize={30}>
-                        <EventLoopPanel />
-                      </Panel>
-                    </PanelGroup>
-                  </Panel>
-                </>
-              )}
-            </PanelGroup>
+                {panels.stack && (
+                  <>
+                    <HorizontalResizeHandle />
+                    <Panel
+                      defaultSize={35}
+                      minSize={20}
+                      className="border-t border-[#252526]"
+                    >
+                      <div className="flex flex-row h-full w-full">
+                        <div className="flex-1 h-full min-w-0 border-r border-[#252526]">
+                          <CallStackPanel />
+                        </div>
+                        <div className="w-[210px] h-full shrink-0">
+                          <EventLoopPanel />
+                        </div>
+                      </div>
+                    </Panel>
+                  </>
+                )}
+              </PanelGroup>
+            </PanelWidthGuard>
           </Panel>
 
           {/* Right Pane (Heap & Queues) */}
@@ -187,45 +182,47 @@ function App() {
               <ResizeHandle />
               <Panel
                 defaultSize={25}
-                minSize={20}
-                className="bg-[#0f0f0f] rounded-r-xl border-l border-[#222]"
+                minSize={15}
+                className="bg-[#1e1e1e] rounded-r-lg border-l border-[#252526]"
               >
-                <PanelGroup orientation="vertical">
-                  {panels.heap && (
-                    <Panel defaultSize={40} minSize={20}>
-                      <HeapPanel />
-                    </Panel>
-                  )}
+                <PanelWidthGuard minWidth={200} label="Heap & Queues">
+                  <PanelGroup orientation="vertical">
+                    {panels.heap && (
+                      <Panel defaultSize={40} minSize={20}>
+                        <HeapPanel />
+                      </Panel>
+                    )}
 
-                  {panels.heap && panels.queues && <HorizontalResizeHandle />}
+                    {panels.heap && panels.queues && <HorizontalResizeHandle />}
 
-                  {panels.queues && (
-                    <Panel defaultSize={60} minSize={20}>
-                      <PanelGroup orientation="vertical">
-                        <Panel
-                          defaultSize={33}
-                          className="border-t border-[#222]"
-                        >
-                          <MicroQueuePanel />
-                        </Panel>
-                        <HorizontalResizeHandle />
-                        <Panel
-                          defaultSize={33}
-                          className="border-t border-[#222]"
-                        >
-                          <MacroQueuePanel />
-                        </Panel>
-                        <HorizontalResizeHandle />
-                        <Panel
-                          defaultSize={34}
-                          className="border-t border-[#222]"
-                        >
-                          <WebAPIPanel />
-                        </Panel>
-                      </PanelGroup>
-                    </Panel>
-                  )}
-                </PanelGroup>
+                    {panels.queues && (
+                      <Panel defaultSize={60} minSize={20}>
+                        <PanelGroup orientation="vertical">
+                          <Panel
+                            defaultSize={33}
+                            className="border-t border-[#252526]"
+                          >
+                            <MicroQueuePanel />
+                          </Panel>
+                          <HorizontalResizeHandle />
+                          <Panel
+                            defaultSize={33}
+                            className="border-t border-[#252526]"
+                          >
+                            <MacroQueuePanel />
+                          </Panel>
+                          <HorizontalResizeHandle />
+                          <Panel
+                            defaultSize={34}
+                            className="border-t border-[#252526]"
+                          >
+                            <WebAPIPanel />
+                          </Panel>
+                        </PanelGroup>
+                      </Panel>
+                    )}
+                  </PanelGroup>
+                </PanelWidthGuard>
               </Panel>
             </>
           )}
