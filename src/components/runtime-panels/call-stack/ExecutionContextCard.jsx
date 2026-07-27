@@ -1,52 +1,8 @@
-import { useSyncExternalStore, useState } from "react";
-import { VisualizationStore } from "../../visualization/store/VisualizationStore";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import EnvironmentBindingsList from "./EnvironmentBindingsList";
 
-function BindingsList({ bindings }) {
-  if (!bindings || bindings.size === 0) {
-    return (
-      <span className="text-[#858585] italic text-[10px]">No bindings</span>
-    );
-  }
-
-  const entries = Array.from(bindings.entries());
-
-  return (
-    <div className="flex flex-col gap-0.5 font-mono">
-      {entries.map(([name, binding]) => {
-        const isRef = typeof binding?.value === "number";
-        const isObj =
-          typeof binding?.value === "object" && binding?.value !== null;
-        const displayVal = isRef
-          ? `→ 0x${binding.value.toString(16).padStart(4, "0")}`
-          : isObj
-            ? `[${binding.value?.type || "Object"}]`
-            : String(binding?.value);
-
-        return (
-          <div key={name} className="flex items-center gap-1.5">
-            <span className="text-[#e2b714] font-medium text-[10px]">
-              {name}
-            </span>
-            <span className="text-[#858585] text-[10px]">:</span>
-            <span
-              className={`text-[10px] ${isRef ? "text-[#e2b714]" : "text-[#d4d4d4]"}`}
-            >
-              {displayVal}
-            </span>
-            {!binding?.initialized && (
-              <span className="text-[8px] text-[#f44747] bg-[#1e1e1e] border border-[#2d2d2d] px-1 rounded">
-                TDZ
-              </span>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function ExecutionContextCard({ frame, index, isTop, isGEC }) {
+export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
   const [expanded, setExpanded] = useState(isTop);
   const frameName = frame.scope?.name || frame.type || "anonymous";
 
@@ -122,7 +78,7 @@ function ExecutionContextCard({ frame, index, isTop, isGEC }) {
                 <div className="text-[9px] text-[#858585] uppercase tracking-wider mb-1 font-medium">
                   Lexical Environment
                 </div>
-                <BindingsList
+                <EnvironmentBindingsList
                   bindings={lexEnv?.environmentRecord?.bindings}
                 />
               </div>
@@ -132,7 +88,7 @@ function ExecutionContextCard({ frame, index, isTop, isGEC }) {
                   <div className="text-[9px] text-[#858585] uppercase tracking-wider mb-1 font-medium">
                     Variable Environment
                   </div>
-                  <BindingsList
+                  <EnvironmentBindingsList
                     bindings={varEnv?.environmentRecord?.bindings}
                   />
                 </div>
@@ -162,54 +118,5 @@ function ExecutionContextCard({ frame, index, isTop, isGEC }) {
         )}
       </AnimatePresence>
     </motion.div>
-  );
-}
-
-export default function CallStackPanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
-
-  const callStack =
-    currentSnapshot?.runtime?.executionContextStack?.stack || [];
-
-  return (
-    <div className="h-full w-full flex flex-col bg-[#1e1e1e]">
-      <div className="px-3 py-1.5 border-b border-[#252526] bg-[#252526] flex items-center justify-between">
-        <span className="text-[11px] font-mono text-[#d4d4d4] uppercase tracking-wider font-semibold">
-          Call Stack
-        </span>
-        <span className="text-[10px] font-mono text-[#e2b714] bg-[#1e1e1e] border border-[#2d2d2d] px-1.5 py-0.5 rounded font-bold">
-          {callStack.length} {callStack.length === 1 ? "Frame" : "Frames"}
-        </span>
-      </div>
-      <div className="flex-1 p-2 overflow-y-auto flex flex-col-reverse gap-1.5 custom-scrollbar">
-        {callStack.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center">
-            <span className="text-xs font-mono text-[#858585] italic">
-              Empty Stack
-            </span>
-          </div>
-        ) : (
-          <AnimatePresence initial={false}>
-            {callStack.map((frame, index) => {
-              const isTop = index === callStack.length - 1;
-              const isGEC = index === 0;
-
-              return (
-                <ExecutionContextCard
-                  key={frame.id || index}
-                  frame={frame}
-                  index={index}
-                  isTop={isTop}
-                  isGEC={isGEC}
-                />
-              );
-            })}
-          </AnimatePresence>
-        )}
-      </div>
-    </div>
   );
 }

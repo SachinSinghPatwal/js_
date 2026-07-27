@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../visualization/store/VisualizationStore";
+import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function WebAPIPanel() {

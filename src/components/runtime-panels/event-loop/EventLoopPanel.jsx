@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../visualization/store/VisualizationStore";
-import { motion } from "framer-motion";
+import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import EventLoopPhaseNode from "./EventLoopPhaseNode";
 
 const BROWSER_PHASES = [
   { id: "CHECK_STACK_EMPTY", label: "Call Stack Empty?" },
@@ -71,29 +71,14 @@ export default function EventLoopPanel() {
           const isActive = activePhaseId === phase.id && !isIdle && !isSyncExec;
 
           return (
-            <div key={phase.id} className="flex flex-col items-center w-full">
-              <motion.div
-                animate={
-                  isActive ? { opacity: 1 } : { opacity: isIdle ? 0.4 : 0.6 }
-                }
-                className={`w-full max-w-[190px] rounded border px-2.5 py-1.5 text-center transition-all ${
-                  isActive
-                    ? "border-[#e2b714] bg-[#252526] text-[#e2b714] font-bold"
-                    : "border-[#2d2d2d] bg-[#252526] text-[#d4d4d4]"
-                }`}
-              >
-                <span className="text-[10px]">{phase.label}</span>
-                {isActive && phaseStep && (
-                  <div className="text-[8px] text-[#858585] mt-0.5 font-normal">
-                    {phaseStep}
-                  </div>
-                )}
-              </motion.div>
-
-              {index < phases.length - 1 && (
-                <div className="py-0.5 text-[#858585] text-[9px]">↓</div>
-              )}
-            </div>
+            <EventLoopPhaseNode
+              key={phase.id}
+              phase={phase}
+              isActive={isActive}
+              isIdle={isIdle}
+              phaseStep={phaseStep}
+              isLast={index === phases.length - 1}
+            />
           );
         })}
       </div>

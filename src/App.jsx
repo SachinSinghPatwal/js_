@@ -1,43 +1,19 @@
-import { useState, useRef } from "react";
-import {
-  Panel,
-  Group as PanelGroup,
-  Separator as PanelResizeHandle,
-} from "react-resizable-panels";
-import CodeEditor from "./components/Editor/CodeEditor";
-import TimelineControls from "./components/Timeline/TimelineControls";
+import { useState } from "react";
+import { Panel, Group as PanelGroup } from "react-resizable-panels";
+import CodeEditor from "./components/editor/CodeEditor";
+import FloatingControlsHeader from "./components/layout/FloatingControlsHeader";
+import { ResizeHandle, HorizontalResizeHandle } from "./components/common/ResizeHandles";
+import PanelWidthGuard from "./components/common/PanelWidthGuard";
 
-import ExecutionStagePanel from "./components/RuntimePanels/ExecutionStagePanel";
-import CallStackPanel from "./components/RuntimePanels/CallStackPanel";
-import HeapPanel from "./components/RuntimePanels/HeapPanel";
-import EventLoopPanel from "./components/RuntimePanels/EventLoopPanel";
-import MicroQueuePanel from "./components/RuntimePanels/MicroQueuePanel";
-import MacroQueuePanel from "./components/RuntimePanels/MacroQueuePanel";
-import WebAPIPanel from "./components/RuntimePanels/WebAPIPanel";
-import EntityDetailsModal from "./components/RuntimePanels/EntityDetailsModal";
-import PanelWidthGuard from "./components/RuntimePanels/PanelWidthGuard";
-
-import ConsolePanel from "./components/RuntimePanels/ConsolePanel";
-
-function ResizeHandle({ className = "" }) {
-  return (
-    <PanelResizeHandle
-      className={`w-1.5 h-full bg-transparent hover:bg-[#e2b714]/40 transition-colors flex items-center justify-center cursor-col-resize ${className}`}
-    >
-      <div className="w-[1px] h-8 bg-[#2d2d2d] rounded-full" />
-    </PanelResizeHandle>
-  );
-}
-
-function HorizontalResizeHandle({ className = "" }) {
-  return (
-    <PanelResizeHandle
-      className={`h-1.5 w-full bg-transparent hover:bg-[#e2b714]/40 transition-colors flex items-center justify-center cursor-row-resize ${className}`}
-    >
-      <div className="h-[1px] w-8 bg-[#2d2d2d] rounded-full" />
-    </PanelResizeHandle>
-  );
-}
+import ExecutionStagePanel from "./components/runtime-panels/execution-stage/ExecutionStagePanel";
+import CallStackPanel from "./components/runtime-panels/call-stack/CallStackPanel";
+import HeapPanel from "./components/runtime-panels/heap/HeapPanel";
+import EventLoopPanel from "./components/runtime-panels/event-loop/EventLoopPanel";
+import MicroQueuePanel from "./components/runtime-panels/queues/MicroQueuePanel";
+import MacroQueuePanel from "./components/runtime-panels/queues/MacroQueuePanel";
+import WebAPIPanel from "./components/runtime-panels/queues/WebAPIPanel";
+import EntityDetailsModal from "./components/runtime-panels/modal/EntityDetailsModal";
+import ConsolePanel from "./components/runtime-panels/console/ConsolePanel";
 
 function App() {
   const [panels, setPanels] = useState({
@@ -47,9 +23,6 @@ function App() {
     console: true,
   });
 
-  const [isControlsVisible, setIsControlsVisible] = useState(false);
-  let mouseTimeout = useRef(null);
-
   const togglePanel = (panelName) => {
     setPanels((prev) => ({
       ...prev,
@@ -57,52 +30,13 @@ function App() {
     }));
   };
 
-  const handleMouseMove = () => {
-    setIsControlsVisible(true);
-    if (mouseTimeout.current) clearTimeout(mouseTimeout.current);
-    mouseTimeout.current = setTimeout(() => setIsControlsVisible(false), 2000);
-  };
-
   return (
     <div className="flex flex-col h-screen bg-[#181818] text-[#d4d4d4] overflow-hidden font-sans relative">
       {/* Entity Details Modal / Inspector */}
       <EntityDetailsModal />
 
-      {/* Hover Zone at Top Center */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-12 z-40"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          if (mouseTimeout.current) clearTimeout(mouseTimeout.current);
-          mouseTimeout.current = setTimeout(
-            () => setIsControlsVisible(false),
-            500,
-          );
-        }}
-      />
-
-      {/* Floating Timeline Controls */}
-      <div
-        className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out ${
-          isControlsVisible
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-4 pointer-events-none"
-        }`}
-        onMouseEnter={() => {
-          setIsControlsVisible(true);
-          if (mouseTimeout.current) clearTimeout(mouseTimeout.current);
-        }}
-        onMouseLeave={() => {
-          mouseTimeout.current = setTimeout(
-            () => setIsControlsVisible(false),
-            2000,
-          );
-        }}
-      >
-        <div className="rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-[#2d2d2d] bg-[#252526]">
-          <TimelineControls panels={panels} togglePanel={togglePanel} />
-        </div>
-      </div>
+      {/* Floating Header with Timeline Controls */}
+      <FloatingControlsHeader panels={panels} togglePanel={togglePanel} />
 
       <div className="flex-1 overflow-hidden p-2">
         <PanelGroup

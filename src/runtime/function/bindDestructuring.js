@@ -1,6 +1,3 @@
-import { resolveIdentifier } from "../environment/resolveIdentifier.js";
-import { setBindingValue } from "../environment/setBindingValues.js";
-import { evaluateExpression } from "../../execution/expressions/evaluateExpression.js";
 import { getHeapValue } from "../heap/getHeapValue.js";
 
 export function bindDestructuring(

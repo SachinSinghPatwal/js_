@@ -1,4 +1,3 @@
-import { createEnvironmentRecord } from "../environment/createEnvironmentRecord.js";
 import { createLexicalEnvironment } from "../environment/createLexicalEnvironment.js";
 import { populateBindings } from "../createRuntimeBindings.js";
 import { createBinding } from "../environment/createBinding.js";

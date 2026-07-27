@@ -1,6 +1,6 @@
 import Editor, { loader } from "@monaco-editor/react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
-import Dark26Theme from "./Theme/dark26.json";
+import Dark26Theme from "./theme/dark26.json";
 import { formatCode } from "../../engine/formatter/formatCode";
 import { parseCode } from "../../engine/parser/parseCode";
 import { buildScopeTree } from "../../engine/scope/scopeBuilder.js";
@@ -8,7 +8,7 @@ import { initializeRuntime } from "../../engine/initializeRuntime";
 import { execute } from "../../execution/execute.js";
 import { VisualizationStore } from "../../visualization/store/VisualizationStore.js";
 import { createSnapshot } from "../../visualization/snapshot/SnapshotGenerator.js";
-import { createDecorations } from "./decorator.js";
+import { createDecorations } from "./decorations/editorDecorations.js";
 
 const baseTheme = {
   fontSize: 13,
