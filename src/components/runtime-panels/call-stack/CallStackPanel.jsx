@@ -37,7 +37,7 @@ export default function CallStackPanel() {
 
               return (
                 <ExecutionContextCard
-                  key={frame.id || index}
+                  key={`${frame.name || "anonymous"}-${frame.id ?? index}`}
                   frame={frame}
                   index={index}
                   isTop={isTop}

@@ -12,6 +12,7 @@ export default function PanelToggleGroup({ panels, togglePanel }) {
         const isActive = panels[key];
         return (
           <button
+            type="button"
             key={key}
             onClick={() => togglePanel(key)}
             className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${

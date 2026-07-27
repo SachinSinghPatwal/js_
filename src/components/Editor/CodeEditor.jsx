@@ -1,5 +1,9 @@
-import Editor, { loader } from "@monaco-editor/react";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { lazy, Suspense, useEffect, useRef, useSyncExternalStore } from "react";
+import { loader } from "@monaco-editor/react";
+
+const Editor = lazy(() =>
+  import("@monaco-editor/react").then((mod) => ({ default: mod.default }))
+);
 import Dark26Theme from "./theme/dark26.json";
 import { formatCode } from "../../engine/formatter/formatCode";
 import { parseCode } from "../../engine/parser/parseCode";
@@ -69,6 +73,11 @@ const baseTheme = {
   formatOnPaste: true,
   formatOnType: true,
 };
+
+/** Pure function — moved to module scope to avoid re-creation on every render */
+function handleEditorChange() {
+  VisualizationStore.reset();
+}
 
 const defaultCodeSnippet = `console.log('1. Sync Start');
 
@@ -175,22 +184,27 @@ const CodeEditor = () => {
     return () => VisualizationStore.setExecuteCallback(null);
   }, []);
 
-  function handleEditorChange() {
-    VisualizationStore.reset();
-  }
 
   return (
     <div className="h-full w-full relative">
-      <Editor
-        height="100%"
-        width="100%"
-        defaultLanguage="javascript"
-        defaultValue={defaultCodeSnippet}
-        theme="Dark26"
-        onMount={onMount}
-        onChange={handleEditorChange}
-        options={baseTheme}
-      />
+      <Suspense
+        fallback={
+          <div className="h-full w-full flex items-center justify-center bg-[#1e1e1e] text-[#858585] text-xs font-mono">
+            Loading editor…
+          </div>
+        }
+      >
+        <Editor
+          height="100%"
+          width="100%"
+          defaultLanguage="javascript"
+          defaultValue={defaultCodeSnippet}
+          theme="Dark26"
+          onMount={onMount}
+          onChange={handleEditorChange}
+          options={baseTheme}
+        />
+      </Suspense>
     </div>
   );
 };

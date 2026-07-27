@@ -20,6 +20,7 @@ export default function PlaybackControls({
   return (
     <div className="flex items-center gap-1">
       <button
+        type="button"
         onClick={onReset}
         className="p-1.5 text-[#858585] hover:text-[#e2b714] transition-colors"
         title="Restart"
@@ -28,6 +29,7 @@ export default function PlaybackControls({
       </button>
 
       <button
+        type="button"
         onClick={onPrev}
         disabled={currentStep === 0}
         className="p-1.5 text-[#858585] hover:text-[#d4d4d4] disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"
@@ -37,8 +39,9 @@ export default function PlaybackControls({
       </button>
 
       <button
+        type="button"
         onClick={onTogglePlay}
-        className="flex items-center justify-center w-6 h-6 mx-1 rounded-full bg-[#e2b714] text-[#1e1e1e] hover:bg-[#f1c40f] transition-all shadow-[0_0_12px_rgba(226,183,20,0.3)] font-bold cursor-pointer"
+        className="flex items-center justify-center w-6 h-6 mx-1 rounded-full bg-[#e2b714] text-[#1e1e1e] hover:bg-[#f1c40f] transition-colors shadow-[0_0_12px_rgba(226,183,20,0.3)] font-bold cursor-pointer"
         title={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
@@ -49,6 +52,7 @@ export default function PlaybackControls({
       </button>
 
       <button
+        type="button"
         onClick={onNext}
         disabled={isAtEnd}
         className="p-1.5 text-[#858585] hover:text-[#d4d4d4] disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"

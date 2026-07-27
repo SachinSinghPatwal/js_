@@ -16,11 +16,12 @@ export default function TimelineProgressBar({
           max={totalSteps}
           value={currentStep}
           onChange={(e) => onSeek(Number(e.target.value))}
+          aria-label="Seek to execution step"
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
         />
         <div
-          className="absolute top-0 left-0 h-full bg-[#e2b714] rounded-full transition-all duration-200 ease-out"
-          style={{ width: `${progress}%` }}
+          className="absolute top-0 left-0 h-full bg-[#e2b714] rounded-full ease-out"
+          style={{ width: `${progress}%`, transition: "width 200ms ease-out" }}
         />
       </div>
       <span className="text-[10px] text-[#858585] min-w-[1.5rem]">

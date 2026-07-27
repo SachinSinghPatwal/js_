@@ -1,6 +1,21 @@
 import { useState, useEffect } from "react";
 import { VisualizationStore } from "../../visualization/store/VisualizationStore";
 
+/** Pure function — moved to module scope to avoid re-creation on every render */
+async function handleStepNext(snapshotsCount, currentStep) {
+  if (snapshotsCount === 0) {
+    await VisualizationStore.executeCode();
+  }
+  if (currentStep < snapshotsCount - 1) {
+    VisualizationStore.nextStep();
+  }
+}
+
+/** Pure function — moved to module scope to avoid re-creation on every render */
+function handleStepPrev() {
+  VisualizationStore.prevStep();
+}
+
 export function useTimelinePlayback(initialSpeed = 2000) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(initialSpeed);
@@ -25,19 +40,6 @@ export function useTimelinePlayback(initialSpeed = 2000) {
       await VisualizationStore.executeCode();
     }
     setIsPlaying((prev) => !prev);
-  };
-
-  const handleStepNext = async (snapshotsCount, currentStep) => {
-    if (snapshotsCount === 0) {
-      await VisualizationStore.executeCode();
-    }
-    if (currentStep < snapshotsCount - 1) {
-      VisualizationStore.nextStep();
-    }
-  };
-
-  const handleStepPrev = () => {
-    VisualizationStore.prevStep();
   };
 
   const handleReset = () => {
