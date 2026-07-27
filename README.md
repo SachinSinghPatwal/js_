@@ -57,25 +57,30 @@ Js_Engine_Visualizer/
 │   ├── index.css                     # Global styles, custom scrollbars, and dark theme utility classes
 │   │
 │   ├── components/                   # VISUALIZER UI LAYER
-│   │   ├── Editor/
-│   │   │   ├── CodeEditor.jsx        # Monaco Editor component with line tracking
-│   │   │   ├── decorator.js          # Active line highlighting decorator
-│   │   │   └── Theme/
-│   │   │       ├── dark26.json       # VS Code Dark (#1e1e1e) editor theme definition
-│   │   │       └── registerTheme.json
-│   │   ├── RuntimePanels/
-│   │   │   ├── CallStackPanel.jsx    # Execution Context Cards & Scope Chain viewer
-│   │   │   ├── ConsolePanel.jsx      # Console output panel with line numbers
-│   │   │   ├── EntityDetailsModal.jsx# Inspector modal for objects & stack frames
-│   │   │   ├── EventLoopPanel.jsx    # Event loop phase pipeline viewer
-│   │   │   ├── ExecutionStagePanel.jsx # Centered flow badge, summary & Know More inspector
-│   │   │   ├── HeapPanel.jsx         # Categorized typed memory heap view
-│   │   │   ├── MacroQueuePanel.jsx   # Macrotask Queue (TimerTask) viewer
-│   │   │   ├── MicroQueuePanel.jsx   # Microtask Queue (PromiseReactionJob) viewer
+│   │   ├── common/                   # Reusable UI building blocks
 │   │   │   ├── PanelWidthGuard.jsx   # Dual width/height observer guard overlay
-│   │   │   └── WebAPIPanel.jsx       # Host Environment (Web APIs) viewer
-│   │   └── Timeline/
-│   │       └── TimelineControls.jsx  # Floating play, pause, step forward/back controls
+│   │   │   └── ResizeHandles.jsx     # Resizable panel handles
+│   │   ├── editor/                   # Monaco Editor & Integrations
+│   │   │   ├── CodeEditor.jsx        # Monaco Editor component with line tracking
+│   │   │   ├── decorations/          # Active line highlighting decorators
+│   │   │   └── theme/                # Custom VS Code dark theme
+│   │   ├── layout/                   # Global layout containers
+│   │   │   └── FloatingControlsHeader.jsx
+│   │   ├── runtime-panels/           # Domain-specific inspection panels
+│   │   │   ├── call-stack/           # Execution Contexts & Scope Chain viewer
+│   │   │   ├── console/              # Console output panel with line numbers
+│   │   │   ├── event-loop/           # Event loop phase pipeline viewer
+│   │   │   ├── execution-stage/      # Flow badge, summary & Know More inspector
+│   │   │   ├── heap/                 # Categorized typed memory heap view
+│   │   │   ├── modal/                # Inspector modal for objects & stack frames
+│   │   │   └── queues/               # Microtasks, Macrotasks & Web APIs viewers
+│   │   └── timeline/                 # Playback & state controls
+│   │       ├── PanelToggleGroup.jsx
+│   │       ├── PlaybackControls.jsx
+│   │       ├── PlaybackSpeedSelector.jsx
+│   │       ├── TimelineControls.jsx  
+│   │       ├── TimelineProgressBar.jsx
+│   │       └── useTimelinePlayback.js
 │   │
 │   ├── engine/                       # INTERPRETER CORE & SUBSYSTEMS LAYER
 │   │   ├── initializeRuntime.js      # Runtime setup & global object allocation

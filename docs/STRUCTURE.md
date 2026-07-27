@@ -10,16 +10,16 @@ The codebase separates the **Visualizer UI Layer** from the **Interpreter / Engi
 Visualizer UI Layer                     Interpreter / Engine Layer
 ┌───────────────────────────────┐       ┌───────────────────────────────┐
 │ src/components/               │       │ src/engine/                   │
-│   ├── Editor/                 │       │   ├── parser/                 │
-│   ├── RuntimePanels/          │       │   ├── scope/                  │
-│   └── Timeline/               │       │   ├── formatter/              │
-├───────────────────────────────┤       │   ├── builtins/               │
-│ src/visualization/            │       │   └── initializeRuntime.js    │
-│   ├── snapshot/               │       ├───────────────────────────────┤
-│   └── store/                  │       │ src/execution/                │
-└───────────────────────────────┘       │   ├── execute.js              │
-                                        │   ├── executeNode.js          │
-                                        │   ├── statements/             │
+│   ├── common/                 │       │   ├── parser/                 │
+│   ├── editor/                 │       │   ├── scope/                  │
+│   ├── layout/                 │       │   ├── formatter/              │
+│   ├── runtime-panels/         │       │   ├── builtins/               │
+│   └── timeline/               │       │   └── initializeRuntime.js    │
+├───────────────────────────────┤       ├───────────────────────────────┤
+│ src/visualization/            │       │ src/execution/                │
+│   ├── snapshot/               │       │   ├── execute.js              │
+│   └── store/                  │       │   ├── executeNode.js          │
+└───────────────────────────────┘       │   ├── statements/             │
                                         │   ├── modules/                │
                                         │   └── expressions/            │
                                         ├───────────────────────────────┤
@@ -36,18 +36,18 @@ Visualizer UI Layer                     Interpreter / Engine Layer
 ## 📂 Folder Responsibilities
 
 ### 1. `src/components/` (Visualizer UI Components)
-- **`Editor/`**: Monaco Editor setup, syntax highlighting, active line decorator (`decorator.js`), and custom VS Code dark theme (`Theme/dark26.json`).
-- **`RuntimePanels/`**: Specialized inspection panels:
-  - `CallStackPanel.jsx`: Execution context cards, scope chain, `this` binding.
-  - `EventLoopPanel.jsx`: Step-by-step event loop phase pipeline.
-  - `ExecutionStagePanel.jsx`: Centered flow badge, single-line action summary, and `Know More` inspector button.
-  - `HeapPanel.jsx`: Categorized typed memory heap view (Objects, Functions, Promises, Arrays, Closures).
-  - `MicroQueuePanel.jsx` & `MacroQueuePanel.jsx`: Queued `PromiseReactionJob` and `TimerTask` viewers.
-  - `WebAPIPanel.jsx`: Host environment (Web APIs) viewer.
-  - `ConsolePanel.jsx`: Simulated stdout/stderr terminal with line numbers (`Line 5`).
-  - `EntityDetailsModal.jsx`: Tree inspector modal with circular reference protection and `Esc` key dismiss.
-  - `PanelWidthGuard.jsx`: Responsive dual width/height observer guard overlay preventing window breakage.
-- **`Timeline/`**: Floating playback controls (`TimelineControls.jsx`).
+- **`common/`**: Reusable shared UI elements (`PanelWidthGuard.jsx`, `ResizeHandles.jsx`).
+- **`editor/`**: Monaco Editor integration (`CodeEditor.jsx`), active line decorators (`decorations/`), and custom themes (`theme/dark26.json`).
+- **`layout/`**: Top-level layout wrappers (`FloatingControlsHeader.jsx`).
+- **`runtime-panels/`**: Specialized execution state inspection panels:
+  - `call-stack/`: Execution context cards, scope chains, and `this` binding (`CallStackPanel.jsx`, `ExecutionContextCard.jsx`).
+  - `console/`: Simulated terminal output with line numbers (`ConsolePanel.jsx`, `ConsoleLogItem.jsx`).
+  - `event-loop/`: Visual phase-by-phase event loop pipeline (`EventLoopPanel.jsx`).
+  - `execution-stage/`: Centered flow badge, action summary, and `Know More` inspector (`ExecutionStagePanel.jsx`).
+  - `heap/`: Categorized typed memory heap view (`HeapPanel.jsx`).
+  - `modal/`: Tree inspector modal with circular reference safety (`EntityDetailsModal.jsx`).
+  - `queues/`: Web API host tasks, Macrotask, and Microtask queues (`MacroQueuePanel.jsx`, `MicroQueuePanel.jsx`, `WebAPIPanel.jsx`).
+- **`timeline/`**: Playback state controls (`TimelineControls.jsx`, `PlaybackControls.jsx`, `TimelineProgressBar.jsx`, `PlaybackSpeedSelector.jsx`, `PanelToggleGroup.jsx`).
 
 ### 2. `src/visualization/` (Snapshot & Visualizer State Management)
 - **`snapshot/SnapshotGenerator.js`**: Pre-computes state snapshots for every step of execution.

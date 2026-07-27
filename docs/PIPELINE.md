@@ -24,10 +24,10 @@
 
 ## Detailed Pipeline Stages
 
-### Stage 1: Parsing (`src/parser/parseCode.js`)
+### Stage 1: Parsing (`src/engine/parser/parseCode.js`)
 Converts JavaScript string into ESTree-compliant AST with location annotations (`loc.start.line`, `loc.start.column`).
 
-### Stage 2: Scope Building (`src/scope/scopeBuilder.js`)
+### Stage 2: Scope Building (`src/engine/scope/scopeBuilder.js`)
 Traverses AST to construct static scope hierarchy (`GlobalScope`, `FunctionScope`, `BlockScope`) and registers declarations.
 
 ### Stage 3: Runtime Initialization (`src/engine/initializeRuntime.js`)
