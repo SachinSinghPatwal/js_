@@ -4,25 +4,32 @@ import { createBinding } from "../environment/createBinding.js";
 
 let functionEcIdCounter = 1;
 
-export function createFunctionExecutionContext(functionObject, thisValue = null) {
+export function createFunctionExecutionContext(
+  functionObject,
+  thisValue = null,
+) {
   const outerEnvironment = functionObject.capturedEnvironment;
+  const functionScope = functionObject.scope || functionObject.functionScope;
 
   const functionLexicalEnvironment = createLexicalEnvironment(
+    functionScope,
     outerEnvironment,
-    functionObject.functionScope
   );
 
   populateBindings(
-    functionObject.functionScope,
+    functionScope,
     functionLexicalEnvironment.environmentRecord,
-    functionLexicalEnvironment
+    functionLexicalEnvironment,
   );
 
   const thisBinding = createBinding("this", "const");
   thisBinding.value = thisValue;
   thisBinding.initialized = true;
 
-  functionLexicalEnvironment.environmentRecord.bindings.set("this", thisBinding);
+  functionLexicalEnvironment.environmentRecord.bindings.set(
+    "this",
+    thisBinding,
+  );
 
   return {
     id: `fec-${functionEcIdCounter++}`,

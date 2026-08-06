@@ -5,6 +5,9 @@ import { VisualizationStore } from "../../visualization/store/VisualizationStore
 async function handleStepNext(snapshotsCount, currentStep) {
   if (snapshotsCount === 0) {
     await VisualizationStore.executeCode();
+    const state = VisualizationStore.getSnapshot();
+    snapshotsCount = state.snapshots.length;
+    currentStep = state.currentStep;
   }
   if (currentStep < snapshotsCount - 1) {
     VisualizationStore.nextStep();
@@ -38,6 +41,7 @@ export function useTimelinePlayback(initialSpeed = 2000) {
   const togglePlay = async (snapshotsCount) => {
     if (snapshotsCount === 0) {
       await VisualizationStore.executeCode();
+      VisualizationStore.jumpToStep(0);
     }
     setIsPlaying((prev) => !prev);
   };

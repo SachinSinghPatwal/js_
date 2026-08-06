@@ -16,7 +16,7 @@ export const VisualizationStore = {
         snapshots,
         currentStep,
         currentSnapshot: snapshots[currentStep] ?? null,
-        modalData
+        modalData,
       };
     }
     return cachedState;
@@ -27,6 +27,7 @@ export const VisualizationStore = {
   },
   addSnapshot(snapshot) {
     snapshots = [...snapshots, snapshot];
+    currentStep = snapshots.length - 1;
     this.notify();
   },
   nextStep() {
@@ -66,5 +67,5 @@ export const VisualizationStore = {
     if (this._executeCallback) {
       await this._executeCallback();
     }
-  }
+  },
 };

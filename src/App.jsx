@@ -38,10 +38,10 @@ function App() {
       {/* Floating Header with Timeline Controls */}
       <FloatingControlsHeader panels={panels} togglePanel={togglePanel} />
 
-      <div className="flex-1 overflow-hidden p-2">
+      <div className="flex-1 overflow-hidden p-1">
         <PanelGroup
           orientation="horizontal"
-          className="h-full rounded-lg overflow-hidden border border-[#252526]"
+          className="h-full rounded-[3px] overflow-hidden border border-[#252526]"
         >
           {/* Editor & Console Pane */}
           <Panel

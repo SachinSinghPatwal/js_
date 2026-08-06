@@ -94,7 +94,7 @@ export default function ExecutionStagePanel() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.15 }}
-                className="px-3 py-1 rounded-full bg-[#252526] border border-[#3c3e41] text-[#e2b714] text-[10px] font-semibold shadow-md"
+                className="px-3 py-1 bg-[#252526] border border-[#3c3e41] text-[#e2b714] text-[12px] font-semibold shadow-md"
               >
                 {info.position}
               </m.div>
@@ -125,7 +125,7 @@ export default function ExecutionStagePanel() {
             <button
               type="button"
               onClick={handleKnowMore}
-              className="mt-1 px-3.5 py-1.5 rounded-lg bg-[#252526] border border-[#3c3e41] text-[#e2b714] hover:bg-[#333333] hover:border-[#e2b714] transition-colors text-[10px] font-bold shadow-md flex items-center gap-1 cursor-pointer"
+              className="mt-1 px-3.5 py-1.5 bg-[#252526] border border-[#3c3e41] text-[#e2b714] hover:bg-[#333333] hover:border-[#e2b714] transition-colors text-[10px] font-bold shadow-md flex items-center gap-1 cursor-pointer"
             >
               Know More
             </button>

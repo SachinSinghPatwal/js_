@@ -30,15 +30,13 @@ export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, transition: { duration: 0.15 } }}
-        className={`rounded border relative overflow-hidden font-mono ${
+        className={`rounded border relative overflow-hidden font-mono flex flex-col ${
           isTop
             ? "border-[#e2b714]/80 bg-[#252526]"
             : "border-[#2d2d2d] bg-[#252526]/60"
         }`}
       >
-        <div
-          className="flex items-center justify-between px-2.5 py-1.5 cursor-pointer hover:bg-[#1e1e1e] transition-colors"
-        >
+        <div className="flex items-center justify-between px-2.5 py-1.5 cursor-pointer hover:bg-[#1e1e1e] transition-colors">
           <div className="flex items-center gap-2">
             <span className="text-[9px] text-[#858585]">
               {expanded ? "▼" : "▶"}
@@ -74,7 +72,7 @@ export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
               style={{ transformOrigin: "top" }}
               className="overflow-hidden"
             >
-              <div className="px-2.5 pb-2 pt-1 border-t border-[#2d2d2d] flex flex-col gap-1.5 bg-[#1e1e1e]">
+              <div className="px-2.5 pb-2 pt-1 border-t border-[#2d2d2d] flex flex-col gap-1.5 bg-[#1e1e1e] max-h-70 overflow-y-auto overflow-x-hidden pr-1 custom-scrollbar">
                 <div className="rounded border border-[#2d2d2d] bg-[#252526] p-2">
                   <div className="text-[9px] text-[#858585] uppercase tracking-wider mb-1 font-medium">
                     Lexical Environment
@@ -96,7 +94,9 @@ export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
                 )}
 
                 <div className="flex items-center gap-2 px-2 py-1 rounded border border-[#2d2d2d] bg-[#252526] text-[10px]">
-                  <span className="text-[#858585] uppercase font-medium">this</span>
+                  <span className="text-[#858585] uppercase font-medium">
+                    this
+                  </span>
                   <span className="text-[#858585]">→</span>
                   <span
                     className={
@@ -110,7 +110,9 @@ export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
                 </div>
 
                 <div className="flex items-center gap-2 px-2 py-1 rounded border border-[#2d2d2d] bg-[#252526] text-[10px]">
-                  <span className="text-[#858585] uppercase font-medium">Outer</span>
+                  <span className="text-[#858585] uppercase font-medium">
+                    Outer
+                  </span>
                   <span className="text-[#858585]">→</span>
                   <span className="text-[#d4d4d4]">{outerDisplay}</span>
                 </div>

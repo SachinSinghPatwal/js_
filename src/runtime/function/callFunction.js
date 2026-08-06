@@ -7,15 +7,22 @@ export function callFunction(
   args,
   executionContextStack,
   heap,
-  thisValue = null
+  thisValue = null,
+  newTarget = null,
 ) {
   if (functionObject.isNative) {
-    return functionObject.nativeCall(args, executionContextStack, heap);
+    return functionObject.nativeCall(
+      args,
+      executionContextStack,
+      heap,
+      thisValue,
+      newTarget,
+    );
   }
 
   const functionExecutionContext = createFunctionExecutionContext(
     functionObject,
-    thisValue
+    thisValue,
   );
 
   bindParameters(
@@ -23,20 +30,16 @@ export function callFunction(
     args,
     functionExecutionContext.lexicalEnvironment.environmentRecord,
     executionContextStack,
-    heap
+    heap,
   );
 
   executionContextStack.push(functionExecutionContext);
 
   let result;
   try {
-    result = executeNode(
-      functionObject.node.body,
-      executionContextStack,
-      heap
-    );
+    result = executeNode(functionObject.node.body, executionContextStack, heap);
   } finally {
-    if (executionContextStack.peek() === functionExecutionContext) {
+    if (executionContextStack.current() === functionExecutionContext) {
       executionContextStack.pop();
     }
   }

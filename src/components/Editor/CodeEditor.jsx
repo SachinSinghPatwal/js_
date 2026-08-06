@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useSyncExternalStore } from "react";
 import { loader } from "@monaco-editor/react";
 
 const Editor = lazy(() =>
-  import("@monaco-editor/react").then((mod) => ({ default: mod.default }))
+  import("@monaco-editor/react").then((mod) => ({ default: mod.default })),
 );
 import Dark26Theme from "./theme/dark26.json";
 import { formatCode } from "../../engine/formatter/formatCode";
@@ -137,7 +137,27 @@ const CodeEditor = () => {
       decorations,
     );
 
-    editorRef.current.revealLineInCenterIfOutsideViewport(start.line);
+    const range = new monacoRef.current.Range(
+      start.line,
+      start.column + 1,
+      end.line,
+      end.column + 1,
+    );
+    const position = new monacoRef.current.Position(
+      start.line,
+      start.column + 1,
+    );
+
+    editorRef.current.setSelection(
+      new monacoRef.current.Selection(
+        start.line,
+        start.column + 1,
+        end.line,
+        end.column + 1,
+      ),
+    );
+    editorRef.current.revealPositionInCenter(position);
+    editorRef.current.revealRangeInCenter(range);
   }, [currentSnapshot]);
 
   function onMount(editor, monaco) {
@@ -183,7 +203,6 @@ const CodeEditor = () => {
     VisualizationStore.setExecuteCallback(handleFormat);
     return () => VisualizationStore.setExecuteCallback(null);
   }, []);
-
 
   return (
     <div className="h-full w-full relative">

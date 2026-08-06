@@ -7,6 +7,7 @@ export class FunctionObject {
 
     // Scope where this function was declared
     this.scope = scope;
+    this.capturedEnvironment = options.capturedEnvironment;
     this.isArrow = Boolean(options.isArrow);
     this.capturedThisValue = options.capturedThisValue;
 
