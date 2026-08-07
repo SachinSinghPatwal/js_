@@ -5,10 +5,10 @@ const Editor = lazy(() =>
   import("@monaco-editor/react").then((mod) => ({ default: mod.default })),
 );
 import Dark26Theme from "./theme/dark26.json";
-import { formatCode } from "../../engine/formatter/formatCode";
-import { parseCode } from "../../engine/parser/parseCode";
+import { formatCode } from "../../engine/formatter/formatCode.js";
+import { parseCode } from "../../engine/parser/parseCode.js";
 import { buildScopeTree } from "../../engine/scope/scopeBuilder.js";
-import { initializeRuntime } from "../../engine/initializeRuntime";
+import { initializeRuntime } from "../../engine/initializeRuntime.js";
 import { execute } from "../../execution/execute.js";
 import { VisualizationStore } from "../../visualization/store/VisualizationStore.js";
 import { createSnapshot } from "../../visualization/snapshot/SnapshotGenerator.js";
