@@ -1,9 +1,14 @@
+import { useEffect, useState } from "react";
 import { LazyMotion, m, AnimatePresence, domAnimation } from "framer-motion";
 import EnvironmentBindingsList from "./EnvironmentBindingsList";
 
 export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
-  // Derive expanded state directly from the prop — no stale-copy useState
-  const expanded = isTop;
+  const [expanded, setExpanded] = useState(isTop);
+
+  useEffect(() => {
+    setExpanded(isTop);
+  }, [isTop]);
+
   const frameName = frame.scope?.name || frame.type || "anonymous";
 
   const lexEnv = frame.lexicalEnvironment;
@@ -36,7 +41,10 @@ export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
             : "border-[#2d2d2d] bg-[#252526]/60"
         }`}
       >
-        <div className="flex items-center justify-between px-2.5 py-1.5 cursor-pointer hover:bg-[#1e1e1e] transition-colors">
+        <div
+          className="flex items-center justify-between px-2.5 py-1.5 cursor-pointer hover:bg-[#1e1e1e] transition-colors"
+          onClick={() => setExpanded((prev) => !prev)}
+        >
           <div className="flex items-center gap-2">
             <span className="text-[9px] text-[#858585]">
               {expanded ? "▼" : "▶"}
@@ -65,11 +73,11 @@ export default function ExecutionContextCard({ frame, index, isTop, isGEC }) {
         <AnimatePresence>
           {expanded && (
             <m.div
-              initial={{ opacity: 0, scaleY: 0 }}
-              animate={{ opacity: 1, scaleY: 1 }}
-              exit={{ opacity: 0, scaleY: 0 }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.15 }}
-              style={{ transformOrigin: "top" }}
+              style={{ overflow: "hidden" }}
               className="overflow-hidden"
             >
               <div className="px-2.5 pb-2 pt-1 border-t border-[#2d2d2d] flex flex-col gap-1.5 bg-[#1e1e1e] max-h-70 overflow-y-auto overflow-x-hidden pr-1 custom-scrollbar">
