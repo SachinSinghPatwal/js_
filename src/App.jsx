@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Panel, Group as PanelGroup } from "react-resizable-panels";
-import CodeEditor from "./components/editor/CodeEditor.jsx";
+import CodeEditor from "./components/editor/CodeEditor";
 import FloatingControlsHeader from "./components/layout/FloatingControlsHeader";
 import {
   ResizeHandle,
