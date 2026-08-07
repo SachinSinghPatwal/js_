@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Panel, Group as PanelGroup } from "react-resizable-panels";
-import CodeEditor from "./components/editor/CodeEditor";
+import CodeEditor from "./components/editor/CodeEditor.jsx";
 import FloatingControlsHeader from "./components/layout/FloatingControlsHeader";
-import { ResizeHandle, HorizontalResizeHandle } from "./components/common/ResizeHandles";
+import {
+  ResizeHandle,
+  HorizontalResizeHandle,
+} from "./components/common/ResizeHandles";
 import PanelWidthGuard from "./components/common/PanelWidthGuard";
 
 import ExecutionStagePanel from "./components/runtime-panels/execution-stage/ExecutionStagePanel";
@@ -49,7 +52,11 @@ function App() {
             minSize={28}
             className="bg-[#1e1e1e] rounded-l-lg border-r border-[#252526]"
           >
-            <PanelWidthGuard minWidth={280} minHeight={150} label="Editor & Console">
+            <PanelWidthGuard
+              minWidth={280}
+              minHeight={150}
+              label="Editor & Console"
+            >
               <div className="flex flex-col h-full w-full">
                 {/* Code Editor */}
                 <div
@@ -81,7 +88,11 @@ function App() {
 
           {/* Execution Stage & Call Stack / Event Loop */}
           <Panel defaultSize={40} minSize={32} className="bg-[#1e1e1e]">
-            <PanelWidthGuard minWidth={300} minHeight={150} label="Execution Stage & Stack">
+            <PanelWidthGuard
+              minWidth={300}
+              minHeight={150}
+              label="Execution Stage & Stack"
+            >
               <PanelGroup orientation="vertical">
                 {/* Execution Stage Panel (55%) */}
                 <Panel defaultSize={55} minSize={25} className="flex flex-col">
@@ -121,7 +132,11 @@ function App() {
                 minSize={24}
                 className="bg-[#1e1e1e] rounded-r-lg border-l border-[#252526]"
               >
-                <PanelWidthGuard minWidth={240} minHeight={150} label="Heap & Queues">
+                <PanelWidthGuard
+                  minWidth={240}
+                  minHeight={150}
+                  label="Heap & Queues"
+                >
                   <PanelGroup orientation="vertical">
                     {panels.heap && (
                       <Panel defaultSize={40} minSize={25}>
