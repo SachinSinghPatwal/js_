@@ -1,9 +1,17 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import TimelineControls from "../timeline/TimelineControls";
 
 export default function FloatingControlsHeader({ panels, togglePanel }) {
-  const [isControlsVisible, setIsControlsVisible] = useState(false);
+  const [isControlsVisible, setIsControlsVisible] = useState(true);
   const mouseTimeout = useRef(null);
+
+  useEffect(() => {
+    mouseTimeout.current = setTimeout(() => setIsControlsVisible(false), 2200);
+
+    return () => {
+      if (mouseTimeout.current) clearTimeout(mouseTimeout.current);
+    };
+  }, []);
 
   const handleMouseMove = () => {
     setIsControlsVisible(true);
@@ -21,7 +29,7 @@ export default function FloatingControlsHeader({ panels, togglePanel }) {
           if (mouseTimeout.current) clearTimeout(mouseTimeout.current);
           mouseTimeout.current = setTimeout(
             () => setIsControlsVisible(false),
-            500,
+            250,
           );
         }}
       />
@@ -40,7 +48,7 @@ export default function FloatingControlsHeader({ panels, togglePanel }) {
         onMouseLeave={() => {
           mouseTimeout.current = setTimeout(
             () => setIsControlsVisible(false),
-            2000,
+            1000,
           );
         }}
       >
