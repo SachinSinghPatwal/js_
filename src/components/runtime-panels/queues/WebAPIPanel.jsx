@@ -1,12 +1,9 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector } from "react-redux";
+import { selectCurrentSnapshot } from "../../../store/selectors";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function WebAPIPanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
 
   const webAPIs = currentSnapshot?.runtime?.webAPIs
     ? Array.from(currentSnapshot.runtime.webAPIs.entries())

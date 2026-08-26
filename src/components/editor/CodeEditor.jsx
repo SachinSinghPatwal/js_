@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useRef, useSyncExternalStore } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { loader } from "@monaco-editor/react";
 
 const Editor = lazy(() =>
@@ -10,7 +11,9 @@ import { parseCode } from "../../engine/parser/parseCode.js";
 import { buildScopeTree } from "../../engine/scope/scopeBuilder.js";
 import { initializeRuntime } from "../../engine/initializeRuntime.js";
 import { execute } from "../../execution/execute.js";
-import { VisualizationStore } from "../../visualization/store/VisualizationStore.js";
+import { addSnapshot, reset } from "../../store/visualizationSlice.js";
+import { setExecuteCallback } from "../../store/executeCallbackRegistry.js";
+import { selectCurrentSnapshot } from "../../store/selectors.js";
 import { createSnapshot } from "../../visualization/snapshot/SnapshotGenerator.js";
 import { createDecorations } from "./decorations/editorDecorations.js";
 
@@ -74,10 +77,7 @@ const baseTheme = {
   formatOnType: true,
 };
 
-/** Pure function — moved to module scope to avoid re-creation on every render */
-function handleEditorChange() {
-  VisualizationStore.reset();
-}
+/** handleEditorChange is defined inside the component so it can access dispatch */
 
 const defaultCodeSnippet = `console.log('1. Sync Start');
 
@@ -104,11 +104,14 @@ const CodeEditor = () => {
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
   const prevDecorationsRef = useRef([]);
+  const dispatch = useDispatch();
 
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
+
+  /** Resets visualization state when the editor content changes */
+  function handleEditorChange() {
+    dispatch(reset());
+  }
 
   useEffect(() => {
     loader.init().then((monaco) => {
@@ -178,30 +181,26 @@ const CodeEditor = () => {
 
       const runtime = initializeRuntime(scopeTree);
 
-      VisualizationStore.reset();
+      dispatch(reset());
       let stepCount = 0;
       runtime.onStep = (node, rt) => {
-        VisualizationStore.addSnapshot(createSnapshot(stepCount++, node, rt));
+        dispatch(addSnapshot(createSnapshot(stepCount++, node, rt)));
       };
 
       execute(parsedToAST, runtime);
 
-      VisualizationStore.addSnapshot(
-        createSnapshot(stepCount++, null, runtime),
-      );
+      dispatch(addSnapshot(createSnapshot(stepCount++, null, runtime)));
 
-      console.log(
-        "Execution complete. Snapshots generated:",
-        VisualizationStore.getSnapshot().snapshots.length,
-      );
+      console.log("Execution complete. Snapshots dispatched:", stepCount);
     } catch (error) {
       console.error(error.message);
     }
   }
 
   useEffect(() => {
-    VisualizationStore.setExecuteCallback(handleFormat);
-    return () => VisualizationStore.setExecuteCallback(null);
+    setExecuteCallback(handleFormat);
+    return () => setExecuteCallback(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

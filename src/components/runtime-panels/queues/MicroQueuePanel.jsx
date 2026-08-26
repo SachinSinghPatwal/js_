@@ -1,18 +1,17 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCurrentSnapshot } from "../../../store/selectors";
+import { setModalData } from "../../../store/visualizationSlice";
 import { AnimatePresence } from "framer-motion";
 import QueueTaskCard from "./QueueTaskCard";
 
 export default function MicroQueuePanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const dispatch = useDispatch();
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
 
   const microtasks = currentSnapshot?.runtime?.microtaskQueue || [];
 
   const handleInspect = (task) => {
-    VisualizationStore.setModalData({
+    dispatch(setModalData({
       type: "Microtask Job",
       title: task.type || "Job",
       data: {
@@ -20,7 +19,7 @@ export default function MicroQueuePanel() {
         callbackName: task.callback?.name || task.callback?.node?.id?.name || "(anonymous)",
         args: task.args,
       },
-    });
+    }));
   };
 
   return (

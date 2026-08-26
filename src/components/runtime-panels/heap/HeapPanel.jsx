@@ -1,5 +1,6 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCurrentSnapshot } from "../../../store/selectors";
+import { setModalData } from "../../../store/visualizationSlice";
 import HeapCategoryGroup from "./HeapCategoryGroup";
 
 function formatAddress(addr) {
@@ -7,10 +8,8 @@ function formatAddress(addr) {
 }
 
 export default function HeapPanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const dispatch = useDispatch();
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
 
   const heapCategorized = currentSnapshot?.heapCategorized;
 
@@ -36,11 +35,11 @@ export default function HeapPanel() {
     const value = heap.get?.(address);
     const meta = heap.getMeta?.(address);
 
-    VisualizationStore.setModalData({
+    dispatch(setModalData({
       type: "Heap Object",
       title: `${formatAddress(address)} [${meta?.typeTag || "Object"}]`,
       data: { address, value, meta },
-    });
+    }));
   };
 
   return (

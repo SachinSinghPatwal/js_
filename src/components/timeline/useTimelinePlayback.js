@@ -1,25 +1,35 @@
 import { useState, useEffect } from "react";
-import { VisualizationStore } from "../../visualization/store/VisualizationStore";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  nextStep,
+  prevStep,
+  jumpToStep,
+  reset,
+  executeCode,
+} from "../../store/visualizationSlice";
+import {
+  selectSnapshots,
+  selectCurrentStep,
+} from "../../store/selectors";
 
-/** Pure function — moved to module scope to avoid re-creation on every render */
-async function handleStepNext(snapshotsCount, currentStep) {
+/** Pure function — calls dispatch inside the hook closure via handleStepNext wrapper */
+async function stepNextLogic(dispatch, snapshotsCount, currentStep) {
   if (snapshotsCount === 0) {
-    await VisualizationStore.executeCode();
-    const state = VisualizationStore.getSnapshot();
-    snapshotsCount = state.snapshots.length;
-    currentStep = state.currentStep;
+    await dispatch(executeCode());
+    // After execution, snapshotsCount is updated via Redux state; just move forward
+    dispatch(nextStep());
+    return;
   }
   if (currentStep < snapshotsCount - 1) {
-    VisualizationStore.nextStep();
+    dispatch(nextStep());
   }
-}
-
-/** Pure function — moved to module scope to avoid re-creation on every render */
-function handleStepPrev() {
-  VisualizationStore.prevStep();
 }
 
 export function useTimelinePlayback(initialSpeed = 2000) {
+  const dispatch = useDispatch();
+  const snapshots = useSelector(selectSnapshots);
+  const currentStep = useSelector(selectCurrentStep);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(initialSpeed);
 
@@ -27,34 +37,40 @@ export function useTimelinePlayback(initialSpeed = 2000) {
     let intervalId;
     if (isPlaying) {
       intervalId = setInterval(() => {
-        const state = VisualizationStore.getSnapshot();
-        if (state.currentStep < state.snapshots.length - 1) {
-          VisualizationStore.nextStep();
+        if (currentStep < snapshots.length - 1) {
+          dispatch(nextStep());
         } else {
           setIsPlaying(false);
         }
       }, speed);
     }
     return () => clearInterval(intervalId);
-  }, [isPlaying, speed]);
+  }, [isPlaying, speed, currentStep, snapshots.length, dispatch]);
 
-  const togglePlay = async (snapshotsCount) => {
-    if (snapshotsCount === 0) {
-      await VisualizationStore.executeCode();
-      VisualizationStore.jumpToStep(0);
+  const handleStepNext = async () => {
+    await stepNextLogic(dispatch, snapshots.length, currentStep);
+  };
+
+  const handleStepPrev = () => {
+    dispatch(prevStep());
+  };
+
+  const togglePlay = async () => {
+    if (snapshots.length === 0) {
+      await dispatch(executeCode());
+      dispatch(jumpToStep(0));
     }
     setIsPlaying((prev) => !prev);
   };
 
   const handleReset = () => {
     setIsPlaying(false);
-    VisualizationStore.reset();
-    VisualizationStore.jumpToStep(0);
+    dispatch(reset());
   };
 
   const handleSeek = (step) => {
     setIsPlaying(false);
-    VisualizationStore.jumpToStep(step);
+    dispatch(jumpToStep(step));
   };
 
   return {

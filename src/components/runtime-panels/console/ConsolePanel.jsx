@@ -1,13 +1,10 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector } from "react-redux";
+import { selectCurrentSnapshot } from "../../../store/selectors";
 import { AnimatePresence } from "framer-motion";
 import ConsoleLogItem from "./ConsoleLogItem";
 
 export default function ConsolePanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
 
   const logs = currentSnapshot?.runtime?.consoleLogs || [];
 

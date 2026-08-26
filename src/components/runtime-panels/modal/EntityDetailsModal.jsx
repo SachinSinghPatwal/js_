@@ -1,26 +1,26 @@
-import { useSyncExternalStore, useEffect } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { selectModalData } from "../../../store/selectors";
+import { setModalData } from "../../../store/visualizationSlice";
 import { LazyMotion, m, AnimatePresence, domAnimation } from "framer-motion";
 import ObjectInspectorTree from "./ObjectInspectorTree";
 
 export default function EntityDetailsModal() {
-  const { modalData } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot()
-  );
+  const dispatch = useDispatch();
+  const modalData = useSelector(selectModalData);
 
   useEffect(() => {
     if (!modalData) return;
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        VisualizationStore.setModalData(null);
+        dispatch(setModalData(null));
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [modalData]);
+  }, [modalData, dispatch]);
 
   if (!modalData) return null;
 
@@ -34,7 +34,7 @@ export default function EntityDetailsModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={() => VisualizationStore.setModalData(null)}
+          onClick={() => dispatch(setModalData(null))}
         >
           <m.div 
             className="bg-[#252526] border border-[#2d2d2d] rounded-xl shadow-2xl w-[540px] max-w-[95vw] max-h-[80vh] flex flex-col overflow-hidden"
@@ -55,7 +55,7 @@ export default function EntityDetailsModal() {
               <button 
                 type="button"
                 className="text-[#858585] hover:text-[#d4d4d4] transition-colors text-sm px-1.5 py-0.5 cursor-pointer"
-                onClick={() => VisualizationStore.setModalData(null)}
+                onClick={() => dispatch(setModalData(null))}
               >
                 ✕
               </button>

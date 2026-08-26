@@ -1,5 +1,5 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../visualization/store/VisualizationStore";
+import { useSelector } from "react-redux";
+import { selectSnapshots, selectCurrentStep } from "../../store/selectors";
 import { useTimelinePlayback } from "./useTimelinePlayback";
 import PlaybackControls from "./PlaybackControls";
 import TimelineProgressBar from "./TimelineProgressBar";
@@ -7,10 +7,8 @@ import PanelToggleGroup from "./PanelToggleGroup";
 import PlaybackSpeedSelector from "./PlaybackSpeedSelector";
 
 export default function TimelineControls({ panels, togglePanel }) {
-  const { snapshots, currentStep } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const snapshots = useSelector(selectSnapshots);
+  const currentStep = useSelector(selectCurrentStep);
 
   const {
     isPlaying,
@@ -34,8 +32,8 @@ export default function TimelineControls({ panels, togglePanel }) {
         snapshotsLength={snapshots.length}
         onReset={handleReset}
         onPrev={handleStepPrev}
-        onTogglePlay={() => togglePlay(snapshots.length)}
-        onNext={() => handleStepNext(snapshots.length, currentStep)}
+        onTogglePlay={togglePlay}
+        onNext={handleStepNext}
       />
 
       <TimelineProgressBar

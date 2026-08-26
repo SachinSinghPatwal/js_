@@ -1,13 +1,10 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector } from "react-redux";
+import { selectCurrentSnapshot } from "../../../store/selectors";
 import { AnimatePresence } from "framer-motion";
 import ExecutionContextCard from "./ExecutionContextCard";
 
 export default function CallStackPanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
 
   const callStack =
     currentSnapshot?.runtime?.executionContextStack?.stack || [];

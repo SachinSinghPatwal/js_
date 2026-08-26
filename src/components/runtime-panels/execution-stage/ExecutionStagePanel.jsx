@@ -1,13 +1,14 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCurrentSnapshot, selectCurrentStep, selectSnapshots } from "../../../store/selectors";
+import { setModalData } from "../../../store/visualizationSlice";
 import { LazyMotion, m, AnimatePresence, domAnimation } from "framer-motion";
 import { useExecutionStageInfo } from "./useExecutionStageInfo";
 
 export default function ExecutionStagePanel() {
-  const { currentSnapshot, currentStep, snapshots } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const dispatch = useDispatch();
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
+  const currentStep = useSelector(selectCurrentStep);
+  const snapshots = useSelector(selectSnapshots);
 
   const {
     isExecutionActive,
@@ -31,7 +32,7 @@ export default function ExecutionStagePanel() {
           : String(v?.value),
     }));
 
-    VisualizationStore.setModalData({
+    dispatch(setModalData({
       type: "V8 Internal Property Inspector",
       title: info.summary,
       data: {
@@ -45,7 +46,7 @@ export default function ExecutionStagePanel() {
         microtaskCount: microtasks.length,
         macrotaskCount: macrotasks.length,
       },
-    });
+    }));
   };
 
   return (

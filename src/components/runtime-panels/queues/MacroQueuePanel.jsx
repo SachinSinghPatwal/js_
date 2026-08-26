@@ -1,18 +1,17 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCurrentSnapshot } from "../../../store/selectors";
+import { setModalData } from "../../../store/visualizationSlice";
 import { AnimatePresence } from "framer-motion";
 import QueueTaskCard from "./QueueTaskCard";
 
 export default function MacroQueuePanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const dispatch = useDispatch();
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
 
   const macrotasks = currentSnapshot?.runtime?.macrotaskQueue || [];
 
   const handleInspect = (task) => {
-    VisualizationStore.setModalData({
+    dispatch(setModalData({
       type: "Macrotask",
       title: task.type || "Task",
       data: {
@@ -21,7 +20,7 @@ export default function MacroQueuePanel() {
         args: task.args,
         timerId: task.timerId,
       },
-    });
+    }));
   };
 
   return (

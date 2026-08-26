@@ -1,5 +1,5 @@
-import { useSyncExternalStore } from "react";
-import { VisualizationStore } from "../../../visualization/store/VisualizationStore";
+import { useSelector } from "react-redux";
+import { selectCurrentSnapshot } from "../../../store/selectors";
 import EventLoopPhaseNode from "./EventLoopPhaseNode";
 
 const BROWSER_PHASES = [
@@ -17,10 +17,7 @@ const NODE_PHASES = [
 ];
 
 export default function EventLoopPanel() {
-  const { currentSnapshot } = useSyncExternalStore(
-    (listener) => VisualizationStore.subscribe(listener),
-    () => VisualizationStore.getSnapshot(),
-  );
+  const currentSnapshot = useSelector(selectCurrentSnapshot);
 
   const eventLoop = currentSnapshot?.eventLoopPhase || currentSnapshot?.runtime?.eventLoop;
   const currentPhase = eventLoop?.phase || "IDLE";
