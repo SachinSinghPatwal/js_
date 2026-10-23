@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html, body {
+  background-color: #121212;
+  color-scheme: dark;
+}
 /* Custom Dark Scrollbars matching VS Code Dark Theme */
 ::-webkit-scrollbar {
   width: 8px;

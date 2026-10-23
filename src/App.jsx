@@ -122,7 +122,7 @@ function App() {
               </PanelGroup>
             </PanelWidthGuard>
           </Panel>
-
+          
           {/* Right Pane (Heap & Queues) */}
           {(panels.heap || panels.queues) && (
             <>
