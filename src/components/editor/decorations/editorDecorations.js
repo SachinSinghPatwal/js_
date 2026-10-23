@@ -24,7 +24,7 @@ export function createDecorations(monaco, start, end) {
         end.column + 1
       ),
       options: {
-        inlineClassName: "bg-blue-900/50 rounded-sm",
+        inlineClassName: "bg-blue-900/50 ",
       },
     },
   ];

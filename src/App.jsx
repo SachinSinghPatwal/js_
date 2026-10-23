@@ -41,16 +41,16 @@ function App() {
       {/* Floating Header with Timeline Controls */}
       <FloatingControlsHeader panels={panels} togglePanel={togglePanel} />
 
-      <div className="flex-1 overflow-hidden p-1">
+      <div className="flex-1 overflow-hidden">
         <PanelGroup
           orientation="horizontal"
-          className="h-full rounded-[3px] overflow-hidden border border-[#252526]"
+          className="h-full overflow-hidden border border-[#252526]"
         >
           {/* Editor & Console Pane */}
           <Panel
             defaultSize={35}
             minSize={28}
-            className="bg-[#1e1e1e] rounded-l-lg border-r border-[#252526]"
+            className="bg-[#1e1e1e]  border-r border-[#252526]"
           >
             <PanelWidthGuard
               minWidth={280}
@@ -130,7 +130,7 @@ function App() {
               <Panel
                 defaultSize={25}
                 minSize={24}
-                className="bg-[#1e1e1e] rounded-r-lg border-l border-[#252526]"
+                className="bg-[#1e1e1e] border-l border-[#252526]"
               >
                 <PanelWidthGuard
                   minWidth={240}
